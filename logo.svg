@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="title desc">
+  <title id="title">Couch to 5K</title>
+  <desc id="desc">A couch and a dotted trail leading to a running figure, above the words Couch to 5K.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14B8A6"/>
+      <stop offset="1" stop-color="#0B6E6A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Badge background -->
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+
+  <!-- Soft sun behind the runner -->
+  <circle cx="395" cy="175" r="115" fill="#FFFFFF" opacity="0.12"/>
+
+  <!-- Couch -->
+  <g fill="#FFFFFF">
+    <rect x="76" y="228" width="100" height="44" rx="16" opacity="0.7"/>
+    <rect x="70" y="262" width="112" height="28" rx="10"/>
+    <rect x="58" y="252" width="30" height="48" rx="14"/>
+    <rect x="164" y="252" width="30" height="48" rx="14"/>
+    <rect x="72" y="290" width="10" height="12" rx="3"/>
+    <rect x="170" y="290" width="10" height="12" rx="3"/>
+  </g>
+
+  <!-- Dotted trail from couch to runner -->
+  <path d="M 214 306 Q 310 336 430 302"
+        fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"
+        stroke-dasharray="1 18" opacity="0.9"/>
+
+  <!-- Runner -->
+  <g transform="translate(40 0)" fill="none" stroke="#FFFFFF" stroke-width="16"
+     stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="357" cy="105" r="22" fill="#FFFFFF" stroke="none"/>
+    <!-- torso -->
+    <path d="M350 140 L325 210"/>
+    <!-- front arm -->
+    <path d="M346 152 L378 180 L402 160"/>
+    <!-- back arm -->
+    <path d="M346 152 L315 175 L288 165"/>
+    <!-- front leg -->
+    <path d="M325 210 L365 232 L352 278 L374 284"/>
+    <!-- back leg -->
+    <path d="M325 210 L300 252 L262 245"/>
+  </g>
+
+  <!-- Wordmark -->
+  <g font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" text-anchor="middle">
+    <text x="261" y="384" font-size="38" font-weight="700" letter-spacing="10" fill="#FFFFFF">COUCH TO</text>
+    <text x="256" y="470" font-size="110" font-weight="900" fill="#FFD166">5K</text>
+  </g>
+</svg>
