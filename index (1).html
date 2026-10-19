@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#08080a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<title>First 5K — Couch to 5K</title>
+<style>
+:root{--bg:#0c0c0f;--card:#15151a;--ink:#f4f4f6;--muted:#9d9da8;--green:#cdea44;--green2:#222a10;--line:#2a2a32;--orange:#f9612b;--red:#e05252}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{background:#08080a;color:white;padding:24px 18px 22px;border-radius:0 0 24px 24px}
+.wrap{max-width:760px;margin:auto}header .eyebrow{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#cdea44;font-weight:700}
+h1{font-size:30px;line-height:1.1;margin:8px 0}header p{margin:8px 0 0;color:#b9b9c2}
+nav{display:flex;gap:8px;padding:14px 14px 0;max-width:760px;margin:auto}
+nav button{flex:1;border:1px solid var(--line);background:#15151a;color:var(--muted);border-radius:12px;padding:11px 5px;font-weight:700}
+nav button.active{background:var(--green);border-color:var(--green);color:#0c0c0f}
+main{padding:14px;max-width:760px;margin:auto}.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:17px;margin-bottom:13px;box-shadow:0 2px 8px #00000066}
+h2{font-size:20px;margin:0 0 12px}h3{font-size:16px;margin:0 0 7px}.muted{color:var(--muted)}.small{font-size:13px}
+.row{display:flex;gap:10px;align-items:center}.row>*{min-width:0}.between{justify-content:space-between}
+select,button,input{font:inherit}select{width:100%;padding:11px;border:1px solid var(--line);border-radius:11px;background:#15151a;color:var(--ink)}
+button.primary,button.secondary,button.danger{border:0;border-radius:12px;padding:13px 15px;font-weight:750;cursor:pointer}
+button.primary{background:var(--green);color:#0c0c0f}button.secondary{background:var(--green2);color:var(--green)}button.danger{background:#2a1414;color:var(--red)}
+button:disabled{opacity:.45;cursor:not-allowed}.full{width:100%}
+.pills{display:flex;gap:8px;flex-wrap:wrap}.pill{border-radius:999px;padding:6px 10px;background:#222a10;color:#d7f45e;font-size:12px;font-weight:700}
+.progress{height:9px;border-radius:20px;background:#232329;overflow:hidden}.progress span{display:block;height:100%;width:0;background:var(--green);transition:width .2s}
+.timer{text-align:center;padding:18px 0 12px}.phase{font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:13px;color:var(--green)}.clock{font-size:clamp(56px,15vw,82px);letter-spacing:-.06em;line-height:1.1;font-variant-numeric:tabular-nums;font-weight:800;margin:8px 0}.steptext{font-size:17px;font-weight:700}.quote{border-left:4px solid var(--orange);padding:10px 13px;background:#221910;border-radius:0 10px 10px 0;color:#eda76f}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#1b1b21;padding:12px;border-radius:12px}.stat strong{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}
+.week{padding:13px 0;border-bottom:1px solid var(--line)}.week:last-child{border-bottom:0}.sessions{display:flex;gap:7px;margin-top:9px}.session{flex:1;text-align:center;border:1px solid var(--line);border-radius:10px;padding:9px 2px;font-size:12px;background:#15151a}.session.done{background:var(--green2);border-color:#3a4418;color:var(--green);font-weight:800}.session.current{border:2px solid var(--green);padding:8px 1px}
+footer{padding:4px 18px 28px;text-align:center;color:var(--muted);font-size:12px;max-width:760px;margin:auto}
+hr{border:0;border-top:1px solid var(--line);margin:15px 0}
+input[type=url]{width:100%;padding:11px;border:1px solid var(--line);border-radius:11px;background:#15151a;color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--green)}
+details summary{cursor:pointer;font-weight:700}iframe{display:block}
+@media(min-width:600px){main{padding:18px}.card{padding:20px}.timer{padding:20px 0}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="eyebrow">Your beginner running plan</div><h1>First 5K</h1><p>Small steps. Three runs a week. Your pace, your progress.</p></div></header>
+<nav aria-label="Main navigation">
+<button class="active" data-tab="today">Today</button><button data-tab="plan">Plan</button><button data-tab="progress">Progress</button>
+</nav>
+<main>
+<section id="today" class="panel active">
+<div class="card">
+<div class="row between"><div><div class="small muted">YOUR NEXT WORKOUT</div><h2 id="workoutTitle">Week 1 · Run 1</h2></div><span class="pill" id="workoutDuration">~28 min</span></div>
+<p id="workoutSummary" class="muted">Easy run/walk intervals. You should be able to speak in short sentences.</p>
+<div class="row"><label for="weekSelect" style="font-weight:700;white-space:nowrap">Choose week</label><select id="weekSelect"></select></div>
+<div class="row" style="margin-top:10px"><label for="runSelect" style="font-weight:700;white-space:nowrap">Session</label><select id="runSelect"><option value="0">Run 1</option><option value="1">Run 2</option><option value="2">Run 3</option></select></div>
+</div>
+<div class="card">
+<div class="timer">
+<div class="phase" id="phase">Ready when you are</div><div class="clock" id="clock">00:00</div><div class="steptext" id="stepText">Warm up with a 5-minute brisk walk</div>
+<div class="small muted" id="stepCount" style="margin-top:7px">Workout not started</div>
+</div>
+<div class="progress"><span id="timerProgress"></span></div>
+<div class="row" style="margin-top:15px"><button class="primary" id="startBtn" style="flex:1">Start workout</button><button class="secondary" id="pauseBtn" disabled>Pause</button><button class="secondary" id="skipBtn" disabled>Skip</button></div>
+<p class="small muted" style="margin-bottom:0">Audio cues use your phone's sound. The screen stays awake during a workout. If you lock your phone, cues may pause, but the timer catches up to the real time when you come back.</p>
+</div>
+<div class="card" id="trackCard">
+<h3>Run map</h3>
+<div id="liveMap" style="height:230px;border-radius:12px;overflow:hidden;background:#15151a"></div>
+<div class="statgrid" style="margin-top:10px"><div class="stat"><strong id="liveKm">0.00</strong><span>km</span></div><div class="stat"><strong id="livePace">–</strong><span>pace /km</span></div><div class="stat"><strong id="liveTime">0:00</strong><span>time</span></div></div>
+<p class="small muted" id="trackMsg" style="margin-bottom:0">Your route is drawn as you run. It never leaves your phone.</p>
+</div>
+<div class="card" id="musicCard">
+<h3>Music</h3>
+<div id="musicEmbed"></div>
+<details style="margin-top:10px"><summary class="small">Change playlist</summary>
+<div class="row" style="margin-top:9px"><input id="spotifyInput" type="url" placeholder="Paste a Spotify playlist link" aria-label="Spotify playlist link" autocomplete="off"><button class="secondary" id="spotifySave">Save</button></div>
+<p class="small muted" id="musicMsg" style="margin-bottom:0">In Spotify, tap Share, then Copy link, and paste it here. The button above opens it in your Spotify app with full songs.</p>
+</details>
+</div>
+<div class="card"><h3>Coach's cue</h3><div class="quote" id="coachCue">Start slower than you think you need to. Walking breaks are part of the plan, not a failure.</div><p class="small muted" id="coachNote" style="margin-bottom:0">Wear comfortable shoes, choose a flat route, and finish feeling like you could do a little more.</p></div>
+<div class="card"><h3>Before you go</h3><ul class="small muted" style="padding-left:20px;margin-bottom:0"><li>Walk easily for the first 5 minutes.</li><li>Run at a comfortable, conversational effort — not a sprint.</li><li>Stop if you feel chest pain, faintness, or unusual shortness of breath.</li></ul></div>
+<div class="card"><details><summary>Voice settings</summary>
+<div style="margin-top:10px"><label for="voiceRate" class="small" style="font-weight:700">Speed: <span id="voiceRateLabel">0.92</span>×</label><input id="voiceRate" type="range" min="0.7" max="1.3" step="0.05" value="0.92"></div>
+<div class="row" style="margin-top:10px"><button class="secondary" id="voiceTest">Test voice</button></div>
+<p class="small muted" id="voiceNote" style="margin-bottom:0">Built-in coach voice. The speed slider applies to the voice cues.</p>
+</details></div>
+</section>
+<section id="plan" class="panel">
+<div class="card"><h2>Your 9-week plan</h2><p class="muted">Aim for three non-consecutive days per week, with rest or gentle walking between sessions. If a week feels too hard, repeat it.</p><div id="planList"></div></div>
+<div class="card"><h3>How to progress</h3><p class="muted">The goal is consistency, not speed. Keep running intervals easy, take walking breaks as prescribed, and repeat a week whenever you need more time.</p></div>
+</section>
+<section id="progress" class="panel">
+<div class="card"><h2>Your progress</h2><div class="statgrid"><div class="stat"><strong id="doneCount">0</strong><span>Runs completed</span></div><div class="stat"><strong id="weekCount">0/3</strong><span>This week's runs</span></div><div class="stat"><strong id="streakCount">0</strong><span>Weeks completed</span></div></div><hr><div class="row between"><h3>Workout history</h3><button class="secondary small" id="exportBtn">Export data</button></div><div id="historyList" class="muted small">Complete your first workout to see it here.</div><hr><button class="danger full" id="resetBtn">Reset all progress</button><p class="small muted">Progress is saved on this device in this browser. Clearing browser data or switching devices may erase it. Export a backup occasionally.</p></div>
+</section>
+</main>
+<footer>Free, self-contained beginner tool · No account, subscription, GPS or data sent to a server.</footer>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const plans = [
+{title:"Week 1",desc:"Build the habit with short, gentle jogs.",run:60,walk:90,reps:8,extra:0},
+{title:"Week 2",desc:"Let the running intervals grow a little.",run:90,walk:120,reps:6,extra:0},
+{title:"Week 3",desc:"Introduce longer jogs with recovery walks.",run:90,walk:90,reps:2,extra:180},
+{title:"Week 4",desc:"A steady step toward longer continuous running.",run:180,walk:90,reps:3,extra:180},
+{title:"Week 5",desc:"Build confidence with a longer run interval.",run:300,walk:150,reps:3,extra:300},
+{title:"Week 6",desc:"Work toward longer stretches without stopping.",run:480,walk:180,reps:2,extra:600},
+{title:"Week 7",desc:"Practice continuous easy running.",run:1200,walk:0,reps:1,extra:0},
+{title:"Week 8",desc:"Extend the continuous run gently.",run:1500,walk:0,reps:1,extra:0},
+{title:"Week 9",desc:"Finish with a continuous 30-minute easy run.",run:1800,walk:0,reps:1,extra:0}
+];
+// Week-specific structures. Each session has 5-min warmup and cooldown; all durations are seconds.
+function sessionSteps(w, session){
+ const p=plans[w]; let intervals=[];
+ if(w===0){for(let i=0;i<8;i++){intervals.push({type:"Run",secs:60});intervals.push({type:"Walk",secs:90});}}
+ else if(w===1){for(let i=0;i<6;i++){intervals.push({type:"Run",secs:90});intervals.push({type:"Walk",secs:120});}}
+ else if(w===2){intervals=[{type:"Run",secs:90},{type:"Walk",secs:90},{type:"Run",secs:180},{type:"Walk",secs:180},{type:"Run",secs:90},{type:"Walk",secs:90},{type:"Run",secs:180}];}
+ else if(w===3){intervals=[{type:"Run",secs:180},{type:"Walk",secs:90},{type:"Run",secs:300},{type:"Walk",secs:150},{type:"Run",secs:180},{type:"Walk",secs:90},{type:"Run",secs:300}];}
+ else if(w===4){intervals=[{type:"Run",secs:300},{type:"Walk",secs:180},{type:"Run",secs:300},{type:"Walk",secs:180},{type:"Run",secs:300}];}
+ else if(w===5){intervals=[{type:"Run",secs:300},{type:"Walk",secs:180},{type:"Run",secs:600},{type:"Walk",secs:180},{type:"Run",secs:300}];}
+ else {intervals=[{type:"Run",secs:p.run}];}
+ // Small variation in coach message by session, while keeping the same safe weekly workload.
+ if(session===1 && w<=2) intervals=intervals.map((x,i)=>({...x}));
+ return [{type:"Warm-up walk",secs:300},...intervals,{type:"Cool-down walk",secs:300}];
+}
+const key="first5k.v1";
+let state={completed:[],selectedWeek:0,selectedRun:0};
+try{const saved=JSON.parse(localStorage.getItem(key)||"null");if(saved)state={...state,...saved}}catch(e){}
+let steps=[],stepIndex=0,remaining=0,total=0,elapsed=0,interval=null,running=false,paused=false,started=false,stepEnd=0,wakeLock=null;
+const $=id=>document.getElementById(id);
+function save(){try{localStorage.setItem(key,JSON.stringify(state))}catch(e){}}
+function fmt(s){s=Math.max(0,Math.ceil(s));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function dateKey(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function workoutKey(w,r){return (w+1)+"-"+(r+1)}
+function isDone(w,r){return state.completed.some(x=>x.key===workoutKey(w,r))}
+function selectedDone(){return isDone(state.selectedWeek,state.selectedRun)}
+function fillSelectors(){
+ $("weekSelect").innerHTML=plans.map((p,i)=>`<option value="${i}">${p.title}</option>`).join("");
+ $("weekSelect").value=state.selectedWeek;$("runSelect").value=state.selectedRun;
+}
+function totalFor(s){return s.reduce((a,x)=>a+x.secs,0)}
+function loadWorkout(){
+ if(running){if(!confirm("Change workout and stop the current timer?"))return;stopTimer()}
+ steps=sessionSteps(state.selectedWeek,state.selectedRun);total=totalFor(steps);stepIndex=0;remaining=steps[0].secs;elapsed=0;started=false;paused=false;
+ $("workoutTitle").textContent=`Week ${state.selectedWeek+1} · Run ${state.selectedRun+1}`;
+ $("workoutDuration").textContent="~"+Math.round(total/60)+" min";
+ $("workoutSummary").textContent=plans[state.selectedWeek].desc;
+ $("startBtn").textContent=selectedDone()?"Run again":"Start workout";
+ $("phase").textContent="Ready when you are";$("clock").textContent=fmt(steps[0].secs);$("stepText").textContent=steps[0].type;
+ $("stepCount").textContent=`${steps.length} stages · ${Math.round(total/60)} minutes`;
+ $("timerProgress").style.width="0%";$("pauseBtn").disabled=true;$("skipBtn").disabled=true;
+ const cues=[
+ "Start slower than you think you need to. Walking breaks are part of the plan, not a failure.",
+ "Keep your shoulders relaxed and your steps light. You should be able to speak in short sentences.",
+ "Consistency beats speed. If this week feels too tough, repeat it before moving on.",
+ "The run intervals are practice, not a test. Easy effort is the right effort.",
+ "Finish feeling in control. You can always slow down or take an extra walk break."
+ ];
+ $("coachCue").textContent=cues[Math.min(state.selectedWeek,4)];
+ $("coachNote").textContent=state.selectedWeek<3?"Focus on showing up three times this week; pace and distance don't matter yet.":"Let your breathing guide the pace. Slow down before you feel you need to.";
+ renderProgress();renderPlan();
+}
+function tone(freq=700,duration=.18){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ctx=new C();const o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.value=freq;g.gain.value=.07;o.connect(g);g.connect(ctx.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);o.stop(ctx.currentTime+duration);setTimeout(()=>ctx.close(),duration*1000+100)}catch(e){}}
+const prefKey="first5k.prefs.v1";
+const DEFAULT_PLAYLIST="https://open.spotify.com/playlist/742s0LCNE7KlKvjb63n3ie";
+let prefs={voiceURI:"",rate:.92,spotify:DEFAULT_PLAYLIST};
+try{const sp=JSON.parse(localStorage.getItem(prefKey)||"null");if(sp)prefs={...prefs,...sp}}catch(e){}
+function savePrefs(){try{localStorage.setItem(prefKey,JSON.stringify(prefs))}catch(e){}}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+// Pre-recorded coach voice clips (bundled in the repo). Falls back to the
+// phone's text-to-speech if a clip is missing or can't play.
+const CLIPS={
+ "Start running. Let's fucking go, my nigga!":"cue3-start.mp3",
+ "Walk and recover. Nice fucking work, my nigga.":"cue3-walk.mp3",
+ "Workout resumed. Let's finish this shit strong, my nigga.":"cue3-resumed.mp3",
+ "Workout complete. Great fucking job, my nigga! Take your cool down nice and slow.":"cue3-complete.mp3"
+};
+function fallbackSpeak(msg){try{if("speechSynthesis"in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(msg);u.rate=Number(prefs.rate)||.92;speechSynthesis.speak(u)}}catch(e){}}
+function speak(msg){
+ const f=CLIPS[msg];
+ if(!f){fallbackSpeak(msg);return;}
+ try{
+  const a=new Audio(f);a.preload="auto";a.playbackRate=Number(prefs.rate)||.92;
+  const p=a.play();if(p&&p.catch)p.catch(()=>fallbackSpeak(msg));
+ }catch(e){fallbackSpeak(msg)}
+}
+function renderVoice(){
+ $("voiceRate").value=prefs.rate;$("voiceRateLabel").textContent=(Number(prefs.rate)||.92).toFixed(2);
+}
+$("voiceRate").addEventListener("input",e=>{prefs.rate=+e.target.value;$("voiceRateLabel").textContent=prefs.rate.toFixed(2);savePrefs()});
+$("voiceTest").addEventListener("click",()=>speak("Start running. Let's fucking go, my nigga!"));
+function spotifyLink(raw){
+ raw=(raw||"").trim();
+ let m=raw.match(/^spotify:(playlist|album|track|show|episode|artist):([A-Za-z0-9]+)$/i);
+ if(!m)m=raw.match(/^https?:\/\/open\.spotify\.com\/(?:intl-[a-z-]+\/)?(?:embed\/)?(playlist|album|track|show|episode|artist)\/([A-Za-z0-9]+)/i);
+ return m?`https://open.spotify.com/${m[1].toLowerCase()}/${m[2]}`:"";
+}
+// Drawn at startup and when the playlist changes. Opens the playlist in the
+// Spotify app (full songs, keeps playing with the screen off) instead of an
+// embedded player, which Spotify limits to 30-second previews.
+function renderMusic(){
+ const u=spotifyLink(prefs.spotify);
+ const box=$("musicEmbed");
+ if(!u){box.innerHTML='<p class="muted small" style="margin:0">No playlist yet. Paste a Spotify link below.</p>';return;}
+ box.innerHTML='<button class="primary full" id="openSpotifyBtn" type="button">▶ Open in Spotify</button><p class="small muted" style="margin:8px 0 0">Plays full songs in your Spotify app and keeps playing with the screen off.</p>';
+ $("openSpotifyBtn").addEventListener("click",()=>window.open(u,"_blank","noopener"));
+}
+$("spotifySave").addEventListener("click",()=>{
+ const v=$("spotifyInput").value.trim();
+ if(/spotify\.link\//i.test(v)){$("musicMsg").textContent="That's a short link. Open it in Chrome, then copy the address from the address bar and paste that here.";return}
+ const u=spotifyLink(v);
+ if(!u){$("musicMsg").textContent="That doesn't look like a Spotify link. In Spotify, tap Share, then Copy link.";return}
+ prefs.spotify=u;savePrefs();renderMusic();$("spotifyInput").value="";$("musicMsg").textContent="Playlist saved on this device.";
+});
+function announceStep(){const s=steps[stepIndex];tone(s.type==="Run"?850:560,.22);speak(s.type==="Run"?"Start running. Let's fucking go, my nigga!":s.type==="Walk"||s.type.includes("walk")?"Walk and recover. Nice fucking work, my nigga.":s.type);$("phase").textContent=s.type;$("stepText").textContent=s.type;$("clock").textContent=fmt(remaining);$("stepCount").textContent=`Stage ${stepIndex+1} of ${steps.length}`;}
+function calcElapsed(){let e=0;for(let i=0;i<stepIndex;i++)e+=steps[i].secs;return e+steps[stepIndex].secs-remaining}
+// Works out where the workout should be from the real clock, so the timer catches up if the phone paused the page.
+// Returns -1 if the workout finished, 1 if the stage changed, 0 otherwise.
+function sync(){
+ const now=Date.now();let changed=0;
+ while(now>=stepEnd){
+  stepIndex++;
+  if(stepIndex>=steps.length){finishWorkout();return -1}
+  stepEnd+=steps[stepIndex].secs*1000;changed=1;
+ }
+ remaining=Math.ceil((stepEnd-now)/1000);elapsed=calcElapsed();
+ return changed;
+}
+async function keepAwake(on){
+ try{
+  if(!on){if(wakeLock){const w=wakeLock;wakeLock=null;await w.release()}return}
+  if("wakeLock"in navigator&&!wakeLock){
+   wakeLock=await navigator.wakeLock.request("screen");
+   wakeLock.addEventListener("release",()=>{wakeLock=null});
+  }
+ }catch(e){wakeLock=null}
+}
+function tick(){
+ if(!running||paused)return;
+ const r=sync();
+ if(r<0)return;
+ if(r>0)announceStep();
+ updateTimer();
+}
+function updateTimer(){$("clock").textContent=fmt(remaining);$("timerProgress").style.width=Math.min(100,elapsed/total*100)+"%"}
+// ---- Run tracking: GPS route, distance, pace. Everything stays on-device. ----
+let track=[], watchId=null, trackMsg="", liveMap=null, liveLine=null;
+function havKm(a,b){const R=6371,r=Math.PI/180,dLa=(b.lat-a.lat)*r,dLo=(b.lon-a.lon)*r;const s=Math.sin(dLa/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(s));}
+function trackKm(pts){let d=0;for(let i=1;i<pts.length;i++)d+=havKm(pts[i-1],pts[i]);return d;}
+function fmtPace(spk){if(!isFinite(spk)||spk<=0||spk>3600)return "–";const m=Math.floor(spk/60),s=Math.round(spk%60);return m+":"+String(s).padStart(2,"0");}
+function fmtClock(sec){sec=Math.max(0,Math.round(sec));return Math.floor(sec/60)+":"+String(sec%60).padStart(2,"0");}
+function downsample(pts,max=300){if(pts.length<=max)return pts;const st=Math.ceil(pts.length/max);return pts.filter((_,i)=>i%st===0);}
+function startTrack(){
+ track=[];trackMsg="";stopTrack();resetTrackCard();
+ if(!("geolocation" in navigator)){trackMsg="Location isn't available on this device.";$("trackMsg").textContent=trackMsg;return;}
+ try{
+  watchId=navigator.geolocation.watchPosition(pos=>{
+   if(!(running&&!paused))return;
+   const c=pos.coords;
+   if(c.accuracy&&c.accuracy>40)return;
+   const p={lat:+c.latitude.toFixed(6),lon:+c.longitude.toFixed(6),t:Date.now()};
+   const last=track[track.length-1];
+   if(last){
+    const dM=havKm(last,p)*1000, dt=(p.t-last.t)/1000;
+    if(dM<8&&dt<15)return;
+    if(dt>0&&dM/dt>16.7)return;
+   }
+   track.push(p);updateTrackUI();
+  },err=>{
+   trackMsg=err&&err.code===1?"Location permission denied — allow it for this site to get distance & pace.":"Couldn't get a GPS fix.";
+   $("trackMsg").textContent=trackMsg;
+  },{enableHighAccuracy:true,maximumAge:2000,timeout:20000});
+ }catch(e){trackMsg="Location isn't available.";$("trackMsg").textContent=trackMsg;}
+}
+function stopTrack(){if(watchId!==null){try{navigator.geolocation.clearWatch(watchId)}catch(e){}watchId=null;}}
+function resetTrackCard(){
+ $("liveKm").textContent="0.00";$("livePace").textContent="–";$("liveTime").textContent="0:00";
+ $("trackMsg").textContent="Your route is drawn as you run. It never leaves your phone.";
+ resetLiveMap();
+}
+function resetLiveMap(){try{if(liveMap)liveMap.remove()}catch(e){}liveMap=null;liveLine=null;const el=$("liveMap");if(el)el.innerHTML="";}
+function updateTrackUI(){
+ const km=trackKm(track), secs=elapsed||0;
+ $("liveKm").textContent=km.toFixed(2);
+ $("liveTime").textContent=fmtClock(secs);
+ $("livePace").textContent=km>0.02&&secs>10?fmtPace(secs/km):"–";
+ $("trackMsg").textContent=trackMsg||(track.length?"Your route is drawn as you run. It never leaves your phone.":"Waiting for GPS…");
+ drawLiveMap();
+}
+function drawLiveMap(){
+ const el=$("liveMap");if(!el||!track.length)return;
+ const latlngs=track.map(p=>[p.lat,p.lon]);
+ if(window.L){
+  try{
+   if(!liveMap){
+    el.innerHTML="";
+    liveMap=L.map("liveMap",{zoomControl:false}).setView(latlngs[0],15);
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors © CARTO"}).addTo(liveMap);
+    liveLine=L.polyline(latlngs,{color:"#cdea44",weight:4}).addTo(liveMap);
+    L.circleMarker(latlngs[0],{radius:6,color:"#cdea44",fillColor:"#cdea44",fillOpacity:1}).addTo(liveMap);
+    setTimeout(()=>{try{liveMap.invalidateSize()}catch(e){}},150);
+   }else liveLine.setLatLngs(latlngs);
+   liveMap.fitBounds(liveLine.getBounds(),{padding:[24,24]});
+   return;
+  }catch(e){}
+ }
+ drawTraceCanvas(el,track);
+}
+function drawTraceCanvas(el,pts){
+ const w=el.clientWidth||320,h=230;
+ const lats=pts.map(p=>p.lat),lons=pts.map(p=>p.lon);
+ let a=Math.min(...lats),b=Math.max(...lats),c=Math.min(...lons),d=Math.max(...lons);
+ if(b-a<1e-6){b+=5e-5;a-=5e-5}if(d-c<1e-6){d+=5e-5;c-=5e-5}
+ const X=lo=>20+(lo-c)/(d-c)*(w-40),Y=la=>20+(1-(la-a)/(b-a))*(h-40);
+ el.innerHTML=`<canvas width="${w}" height="${h}" style="width:100%;display:block;border-radius:12px;background:#15151a"></canvas><p class="small muted" style="margin:6px 0 0">Offline — the street map needs a data connection.</p>`;
+ const g=el.querySelector("canvas").getContext("2d");
+ g.strokeStyle="#cdea44";g.lineWidth=3;g.lineJoin="round";g.beginPath();
+ pts.forEach((p,i)=>{const x=X(p.lon),y=Y(p.lat);i?g.lineTo(x,y):g.moveTo(x,y)});
+ g.stroke();
+ g.fillStyle="#cdea44";g.beginPath();g.arc(X(pts[0].lon),Y(pts[0].lat),5,0,7);g.fill();
+ g.fillStyle="#e05252";const e=pts[pts.length-1];g.beginPath();g.arc(X(e.lon),Y(e.lat),5,0,7);g.fill();
+}
+function drawTrackInto(el,pts){
+ const latlngs=pts.map(p=>[p.lat,p.lon]);
+ if(window.L){
+  try{
+   el.innerHTML="";
+   const m=L.map(el,{zoomControl:false}).setView(latlngs[0],15);
+   L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors © CARTO"}).addTo(m);
+   const line=L.polyline(latlngs,{color:"#cdea44",weight:4}).addTo(m);
+   L.circleMarker(latlngs[0],{radius:5,color:"#cdea44",fillColor:"#cdea44",fillOpacity:1}).addTo(m);
+   const e=latlngs[latlngs.length-1];
+   L.circleMarker(e,{radius:5,color:"#e05252",fillColor:"#e05252",fillOpacity:1}).addTo(m);
+   m.fitBounds(line.getBounds(),{padding:[16,16]});
+   setTimeout(()=>{try{m.invalidateSize()}catch(_){}},150);
+   return;
+  }catch(_){}
+ }
+ drawTraceCanvas(el,pts);
+}
+function renderHistMap(ts){
+ const x=state.completed.find(v=>v.timestamp===ts);if(!x||!x.track||!x.track.length)return;
+ const el=document.getElementById("histmap-"+ts);if(!el)return;
+ if(el.style.display==="none"||!el.style.display){el.style.display="block";drawTrackInto(el,x.track);}
+ else el.style.display="none";
+}
+function beginWorkout(){
+ steps=sessionSteps(state.selectedWeek,state.selectedRun);total=totalFor(steps);stepIndex=0;remaining=steps[0].secs;stepEnd=Date.now()+remaining*1000;elapsed=0;started=true;running=true;paused=false;
+ $("timerProgress").style.width="0%";announceStep();keepAwake(true);
+ $("startBtn").textContent="Restart workout";$("pauseBtn").disabled=false;$("skipBtn").disabled=false;$("pauseBtn").textContent="Pause";
+ interval=setInterval(tick,1000);startTrack();
+}
+function resumeWorkout(){
+ if(!paused)return;
+ paused=false;running=true;stepEnd=Date.now()+remaining*1000;$("pauseBtn").textContent="Pause";interval=setInterval(tick,1000);speak("Workout resumed. Let's finish this shit strong, my nigga.");keepAwake(true);
+}
+// Start button: starts a new run, runs again after finishing, or restarts (after a check) if a workout is in progress.
+function startWorkout(){
+ if((running||paused)&&!confirm("Restart this workout from the beginning?"))return;
+ stopTimer();beginWorkout();
+}
+function stopTimer(){if(interval)clearInterval(interval);interval=null;running=false;paused=false;keepAwake(false);stopTrack()}
+function finishWorkout(){
+ stopTimer();tone(900,.4);speak("Workout complete. Great fucking job, my nigga! Take your cool down nice and slow.");
+ const k=workoutKey(state.selectedWeek,state.selectedRun);
+ if(!state.completed.some(x=>x.key===k)){
+  const entry={key:k,week:state.selectedWeek,run:state.selectedRun,date:dateKey(),timestamp:Date.now(),minutes:Math.round(total/60)};
+  const km=trackKm(track);
+  if(km>0.05&&track.length>1&&elapsed>30){entry.km=+km.toFixed(2);entry.paceSec=+(elapsed/km).toFixed(0);entry.track=downsample(track);}
+  state.completed.push(entry);save();
+ }
+ $("phase").textContent="Workout complete";$("clock").textContent="00:00";$("stepText").textContent="Great work — you've done today's session";$("stepCount").textContent="Saved to your progress";$("timerProgress").style.width="100%";$("startBtn").textContent="Run again";$("pauseBtn").disabled=true;$("skipBtn").disabled=true;renderProgress();renderPlan();
+}
+function renderProgress(){
+ $("doneCount").textContent=state.completed.length;
+ $("weekCount").textContent=state.completed.filter(x=>x.week===state.selectedWeek).length+"/3";
+ let weeks=0;for(let w=0;w<9;w++){if([0,1,2].every(r=>isDone(w,r)))weeks++;else break}
+ $("streakCount").textContent=weeks;
+ $("historyList").innerHTML=state.completed.length?state.completed.slice().sort((a,b)=>b.timestamp-a.timestamp).map(x=>{
+  const sub=`${x.date} · ${x.minutes} min`+(x.km?` · ${x.km.toFixed(2)} km · ${fmtPace(x.paceSec)} /km`:"");
+  const mapDiv=x.track&&x.track.length?`<div id="histmap-${x.timestamp}" style="display:none;height:210px;border-radius:12px;overflow:hidden;margin:2px 0 8px"></div>`:"";
+  const tap=x.track&&x.track.length?`<br><span class="small" style="color:var(--green);font-weight:700">Tap to view map</span>`:"";
+  return `<div class="histrow" data-ts="${x.timestamp}" style="${x.track?'cursor:pointer;':''}padding:9px 0;border-bottom:1px solid var(--line)"><div class="row between"><span><strong>Week ${x.week+1} · Run ${x.run+1}</strong><br><span class="muted">${sub}</span>${tap}</span><span style="color:var(--green);font-weight:800">✓ Done</span></div></div>${mapDiv}`;
+ }).join(""):'Complete your first workout to see it here.';
+ document.querySelectorAll(".histrow").forEach(r=>r.addEventListener("click",()=>renderHistMap(+r.dataset.ts)));
+}
+function renderPlan(){
+ $("planList").innerHTML=plans.map((p,w)=>{const n=[0,1,2].filter(r=>isDone(w,r)).length;return `<div class="week"><div class="row between"><div><strong>Week ${w+1}</strong><div class="small muted">${p.desc}</div></div><span class="pill">${n}/3 done</span></div><div class="progress" style="margin-top:8px"><span style="width:${n/3*100}%"></span></div><div class="sessions">${[0,1,2].map(r=>`<button class="session ${isDone(w,r)?"done":""} ${w===state.selectedWeek&&r===state.selectedRun?"current":""}" data-w="${w}" data-r="${r}">${isDone(w,r)?"✓ ":""}Run ${r+1}</button>`).join("")}</div></div>`}).join("");
+ document.querySelectorAll(".session").forEach(b=>b.addEventListener("click",()=>{state.selectedWeek=+b.dataset.w;state.selectedRun=+b.dataset.r;save();fillSelectors();loadWorkout();switchTab("today")}));
+}
+function switchTab(tab){document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===tab))}
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
+$("weekSelect").addEventListener("change",e=>{state.selectedWeek=+e.target.value;save();loadWorkout()});
+$("runSelect").addEventListener("change",e=>{state.selectedRun=+e.target.value;save();loadWorkout()});
+$("startBtn").addEventListener("click",startWorkout);
+$("pauseBtn").addEventListener("click",()=>{if(!started)return;if(!paused){if(sync()<0)return;paused=true;running=false;if(interval)clearInterval(interval);interval=null;keepAwake(false);$("pauseBtn").textContent="Resume";$("phase").textContent="Paused";$("stepText").textContent=steps[stepIndex].type;$("stepCount").textContent=`Stage ${stepIndex+1} of ${steps.length}`;updateTimer()}else resumeWorkout()});
+$("skipBtn").addEventListener("click",()=>{if(!started)return;if(running&&sync()<0)return;stepIndex++;if(stepIndex>=steps.length){finishWorkout();return}remaining=steps[stepIndex].secs;stepEnd=Date.now()+remaining*1000;elapsed=calcElapsed();announceStep();updateTimer()});
+$("exportBtn").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="first-5k-progress.json";a.click();URL.revokeObjectURL(url)});
+$("resetBtn").addEventListener("click",()=>{if(confirm("Reset all saved progress? This cannot be undone unless you exported a backup.")){state={completed:[],selectedWeek:0,selectedRun:0};save();stopTimer();fillSelectors();loadWorkout()}});
+fillSelectors();loadWorkout();
+renderVoice();renderMusic();
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&running&&!paused){tick();if(running)keepAwake(true)}});
+if("serviceWorker"in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
+</script>
+</body>
+</html>
