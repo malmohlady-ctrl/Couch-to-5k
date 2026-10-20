@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First 5K — Week 3 · Run 2</title>
+<style>
+:root{
+  --bg:#0c0c0f; --card:#15151a; --ink:#f4f4f6; --muted:#9d9da8;
+  --volt:#cdea44; --ember:#f9612b; --line:#2a2a32;
+  --glass:rgba(16,16,20,.72);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,Helvetica,Arial,sans-serif;
+  max-width:430px; margin:0 auto; min-height:100vh;
+}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:600}
+
+/* ---------- MAP HERO ---------- */
+.hero{position:relative;height:78vh;min-height:560px;background:#101014;overflow:hidden}
+.hero svg.map{position:absolute;inset:0;width:100%;height:100%;display:block}
+.title-overlay{position:absolute;top:14px;left:16px;z-index:5}
+.title-overlay h1{font-size:30px;font-weight:800;letter-spacing:-.04em;line-height:1;text-shadow:0 2px 14px rgba(0,0,0,.6)}
+.title-overlay .eyebrow{text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.phase-pill{
+  position:absolute;top:16px;right:16px;z-index:5;
+  font-size:11px;font-weight:750;letter-spacing:.12em;
+  color:var(--volt);background:rgba(34,42,16,.85);
+  border:1px solid rgba(205,234,68,.35);border-radius:999px;padding:7px 12px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+
+/* Spotify floating bar */
+.music-bar{
+  position:absolute;left:12px;right:12px;top:88px;z-index:5;
+  background:var(--glass);border:1px solid var(--line);border-radius:14px;
+  padding:8px 10px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  display:flex;align-items:center;gap:10px;
+}
+.music-bar .embed{flex:1;min-width:0}
+.music-bar iframe{border:0;border-radius:12px;width:100%;height:80px;display:block}
+.music-bar .side{display:flex;flex-direction:column;align-items:center;gap:4px;flex:none}
+.music-bar .cap{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.btn-full{
+  font-size:12px;font-weight:750;color:var(--volt);background:#222a10;
+  border:1px solid rgba(205,234,68,.35);border-radius:10px;padding:8px 10px;
+  text-decoration:none;white-space:nowrap;
+}
+
+/* Glass timer card floating over map */
+.timer-card{
+  position:absolute;left:12px;right:12px;bottom:14px;z-index:6;
+  background:var(--glass);border:1px solid var(--line);border-radius:18px;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  padding:16px 16px 14px;
+}
+.timer-card .eyebrow{margin-bottom:10px;display:block}
+.stats{display:flex;justify-content:space-between;margin-bottom:12px}
+.stat .val{font-size:32px;font-weight:800;letter-spacing:-.04em;line-height:1.05;font-variant-numeric:tabular-nums}
+.stat .unit{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-top:4px}
+.controls{display:flex;gap:10px}
+.btn-primary{
+  flex:1;background:var(--volt);color:#0c0c0f;border:0;border-radius:14px;
+  font-size:16px;font-weight:750;padding:14px;cursor:pointer;
+}
+.btn-secondary{
+  background:#222a10;color:var(--volt);border:1px solid rgba(205,234,68,.3);
+  border-radius:14px;font-size:14px;font-weight:750;padding:14px 18px;cursor:pointer;
+}
+
+/* ---------- BELOW THE FOLD ---------- */
+.body{padding:22px 16px 40px}
+.section{margin-bottom:26px}
+.section .eyebrow{display:block;margin-bottom:12px}
+.workout-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.workout-head h2{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.workout-head .dur{color:var(--muted);font-size:14px;font-weight:600}
+.step{
+  display:flex;align-items:center;gap:12px;background:var(--card);
+  border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;
+}
+.step .dot{flex:none;width:10px;height:10px;border-radius:50%}
+.dot.walk{background:var(--muted)} .dot.run{background:var(--volt)} .dot.cool{background:var(--ember)}
+.step .txt{flex:1}
+.step .txt .name{font-weight:700;font-size:14px}
+.step .txt .sub{color:var(--muted);font-size:13px;margin-top:2px}
+.step .mins{color:var(--muted);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fact{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.fact .big{font-size:22px;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.fact .lab{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-top:4px}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <svg class="map" viewBox="0 0 375 620" preserveAspectRatio="xMidYMid slice" aria-label="Route map">
+    <defs>
+      <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="6" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+        <path d="M30 0 H0 V30" fill="none" stroke="#1a1a20" stroke-width="1"/>
+      </pattern>
+    </defs>
+    <rect width="375" height="620" fill="#101014"/>
+    <rect width="375" height="620" fill="url(#grid)"/>
+    <path id="route"
+      d="M 70 560 C 90 500, 60 460, 95 420 S 160 380, 150 330 S 90 300, 110 255
+         S 200 240, 210 190 S 170 150, 195 115 S 280 110, 300 80"
+      fill="none" stroke="#cdea44" stroke-width="4" stroke-linecap="round"
+      filter="url(#glow)"/>
+    <circle cx="70" cy="560" r="7" fill="#f9612b"/>
+    <circle cx="70" cy="560" r="12" fill="none" stroke="#f9612b" stroke-width="1.5" opacity=".45"/>
+    <circle cx="300" cy="80" r="7" fill="#f9612b"/>
+    <circle cx="300" cy="80" r="12" fill="none" stroke="#f9612b" stroke-width="1.5" opacity=".45"/>
+    <text x="92" y="564" fill="#9d9da8" font-size="11" font-weight="600">START</text>
+    <text x="222" y="84" fill="#9d9da8" font-size="11" font-weight="600">FINISH</text>
+  </svg>
+
+  <div class="title-overlay">
+    <span class="eyebrow">Your beginner running plan</span>
+    <h1>First 5K</h1>
+  </div>
+  <div class="phase-pill" id="phasePill">WARMUP WALK</div>
+
+  <div class="music-bar">
+    <div class="embed">
+      <iframe src="https://open.spotify.com/embed/playlist/6shxjmkV8vApMS1elKcpHv" height="80" allow="encrypted-media" title="Running 140bpm – 160bpm preview"></iframe>
+    </div>
+    <div class="side">
+      <span class="cap">Preview</span>
+      <a class="btn-full" href="https://open.spotify.com/playlist/6shxjmkV8vApMS1elKcpHv">Full songs</a>
+    </div>
+  </div>
+
+  <div class="timer-card">
+    <span class="eyebrow">Live session</span>
+    <div class="stats">
+      <div class="stat"><div class="val" id="statKm">1.24</div><div class="unit">km</div></div>
+      <div class="stat"><div class="val" id="statPace">7:38</div><div class="unit">/km pace</div></div>
+      <div class="stat"><div class="val" id="statTime">9:28</div><div class="unit">time</div></div>
+    </div>
+    <div class="controls">
+      <button class="btn-primary" id="btnStart">Start</button>
+      <button class="btn-secondary" id="btnReset">Reset</button>
+    </div>
+  </div>
+</section>
+
+<main class="body">
+  <section class="section">
+    <span class="eyebrow">Today's workout</span>
+    <div class="workout-head"><h2>Week 3 · Run 2</h2><span class="dur">~31 min</span></div>
+    <div class="step">
+      <span class="dot walk"></span>
+      <div class="txt"><div class="name">Brisk walk warmup</div><div class="sub">Easy pace, loosen up</div></div>
+      <span class="mins">5 min</span>
+    </div>
+    <div class="step">
+      <span class="dot run"></span>
+      <div class="txt"><div class="name">Run 3 min / Walk 90 sec</div><div class="sub">Repeat × 4 intervals</div></div>
+      <span class="mins">18 min</span>
+    </div>
+    <div class="step">
+      <span class="dot cool"></span>
+      <div class="txt"><div class="name">Cooldown walk</div><div class="sub">Easy pace, bring heart rate down</div></div>
+      <span class="mins">5 min</span>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="eyebrow">Your progress</span>
+    <div class="facts">
+      <div class="fact"><div class="big">3 / 9</div><div class="lab">Week</div></div>
+      <div class="fact"><div class="big">8</div><div class="lab">Runs completed</div></div>
+      <div class="fact"><div class="big">2.4 km</div><div class="lab">Best distance</div></div>
+      <div class="fact"><div class="big">7:12</div><div class="lab">Best pace /km</div></div>
+      <div class="fact"><div class="big">2 wks</div><div class="lab">Streak</div></div>
+      <div class="fact"><div class="big">31 min</div><div class="lab">Longest session</div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="eyebrow">Music</span>
+    <div class="step">
+      <span class="dot run"></span>
+      <div class="txt"><div class="name">Running 140bpm – 160bpm</div><div class="sub">Warm up at 140, build to 150–160</div></div>
+      <a class="btn-full" href="https://open.spotify.com/playlist/6shxjmkV8vApMS1elKcpHv">Open</a>
+    </div>
+  </section>
+</main>
+
+<script>
+(function(){
+  var km=1.24, sec=568, running=false, timer=null;
+  var kmEl=document.getElementById('statKm'),
+      paceEl=document.getElementById('statPace'),
+      timeEl=document.getElementById('statTime'),
+      btn=document.getElementById('btnStart'),
+      pill=document.getElementById('phasePill');
+  var phases=['WARMUP WALK','RUN','WALK','RUN','WALK','RUN','WALK','RUN','WALK','COOLDOWN'];
+  function fmt(s){var m=Math.floor(s/60),r=Math.floor(s%60);return m+':'+(r<10?'0':'')+r;}
+  function render(){
+    kmEl.textContent=km.toFixed(2);
+    timeEl.textContent=fmt(sec);
+    var p=sec/km/60; // min per km
+    paceEl.textContent=Math.floor(p)+':'+(Math.floor((p%1)*60)<10?'0':'')+Math.floor((p%1)*60);
+    var idx=Math.min(phases.length-1,Math.floor(sec/112));
+    pill.textContent=phases[idx];
+  }
+  btn.addEventListener('click',function(){
+    running=!running;
+    btn.textContent=running?'Pause':'Start';
+    if(running){timer=setInterval(function(){sec++;km+=0.0021;render();},1000);}
+    else{clearInterval(timer);}
+  });
+  document.getElementById('btnReset').addEventListener('click',function(){
+    clearInterval(timer);running=false;btn.textContent='Start';km=1.24;sec=568;render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>
