@@ -1,6 +1,6 @@
 
 /* First 5K service worker — cache-first offline support */
-const CACHE = "first5k-v16";
+const CACHE = "first5k-v19";
 
 const ASSETS = [
   "./",
@@ -30,7 +30,7 @@ self.addEventListener("activate", (event) => {
     caches.keys().then((keys) =>
       Promise.all(
         keys
-          .filter((key) => key !== CACHE)
+          .filter((key) => key !== CACHE && key.startsWith("first5k-"))
           .map((key) => caches.delete(key))
       )
     ).then(() => self.clients.claim())
