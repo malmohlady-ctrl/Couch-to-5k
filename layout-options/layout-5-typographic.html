@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First 5K — Week 3 · Run 2</title>
+<style>
+  :root{
+    --bg:#0c0c0f; --card:#15151a; --ink:#f4f4f6; --muted:#9d9da8;
+    --volt:#cdea44; --ember:#f9612b; --line:#2a2a32;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    max-width:480px; margin:0 auto; min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .poster{padding:0 0 24px}
+  .eyebrow{
+    font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted);
+    font-weight:600; padding:20px 20px 0;
+  }
+  .kicker{
+    font-size:13px; text-transform:uppercase; letter-spacing:.12em; color:var(--volt);
+    font-weight:700; padding:14px 20px 0;
+  }
+  .headline{
+    font-weight:900; text-transform:uppercase; line-height:.86;
+    letter-spacing:-0.04em; font-stretch:condensed;
+    font-size:clamp(76px, 24vw, 120px);
+    padding:6px 20px 0;
+  }
+  .headline .volt{color:var(--volt)}
+  .subline{
+    font-size:14px; text-transform:uppercase; letter-spacing:.18em;
+    color:var(--muted); font-weight:700; padding:12px 20px 0;
+  }
+  .rule{border:0; border-top:2px solid var(--line); margin:22px 0 0}
+  .rule.volt-rule{border-top:3px solid var(--volt)}
+  .section{padding:20px}
+  .label{font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); font-weight:600}
+  .big-num{
+    font-weight:900; text-transform:uppercase; letter-spacing:-0.04em;
+    font-stretch:condensed; font-size:64px; line-height:.95; margin-top:8px;
+  }
+  .big-num .volt{color:var(--volt)}
+  .block-list{margin-top:14px; border-top:2px solid var(--line)}
+  .block{
+    display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+    padding:14px 0; border-bottom:2px solid var(--line);
+  }
+  .block .dur{
+    font-weight:900; text-transform:uppercase; letter-spacing:-0.04em;
+    font-stretch:condensed; font-size:34px; line-height:1; white-space:nowrap;
+  }
+  .block .dur.volt{color:var(--volt)}
+  .block .dur.ember{color:var(--ember)}
+  .block .what{font-size:13px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); font-weight:600; text-align:right}
+  .structure{
+    font-weight:900; text-transform:uppercase; letter-spacing:-0.04em;
+    font-stretch:condensed; font-size:30px; line-height:1.1; margin-top:14px;
+  }
+  .structure .v{color:var(--volt)}
+  .copy{font-size:15px; line-height:1.55; color:var(--ink); margin-top:12px}
+  .copy.muted{color:var(--muted)}
+  .stats{display:grid; grid-template-columns:1fr 1fr; border-top:2px solid var(--line); margin-top:16px}
+  .stat{padding:14px 4px 14px 0; border-bottom:2px solid var(--line)}
+  .stat:nth-child(odd){padding-right:14px}
+  .stat .n{font-weight:900; font-size:30px; letter-spacing:-0.04em; font-stretch:condensed; color:var(--volt)}
+  .stat .n.plain{color:var(--ink)}
+  .stat .t{font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); font-weight:600; margin-top:4px}
+  .map-wrap{margin-top:16px; border:2px solid var(--line); background:#101014}
+  .map-cap{font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); font-weight:600; padding:10px 12px 0}
+  .music{margin-top:16px}
+  .music iframe{width:100%; height:80px; border:0; border-radius:0; display:block; background:#101014}
+  .music-row{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:10px}
+  .music-note{font-size:13px; color:var(--muted)}
+  .btn{
+    display:inline-block; background:var(--volt); color:#0c0c0f;
+    font-weight:750; font-size:14px; text-transform:uppercase; letter-spacing:.08em;
+    padding:12px 20px; border-radius:0; text-decoration:none; border:0; cursor:pointer;
+  }
+  .btn.ghost{background:transparent; color:var(--volt); border:2px solid var(--volt)}
+  .btn.big{
+    display:block; width:100%; text-align:center; font-size:22px; font-weight:900;
+    letter-spacing:-0.02em; padding:22px; margin-top:20px;
+  }
+  .marquee{
+    overflow:hidden; white-space:nowrap; border-top:3px solid var(--volt); border-bottom:3px solid var(--volt);
+    margin:24px 0 0; padding:10px 0; background:var(--volt); color:#0c0c0f;
+  }
+  .marquee span{
+    display:inline-block; font-weight:900; text-transform:uppercase; font-stretch:condensed;
+    letter-spacing:-0.02em; font-size:20px; padding-right:32px;
+    animation:scroll 14s linear infinite;
+  }
+  @keyframes scroll{to{transform:translateX(-50%)}}
+  .micro{padding:20px; font-size:13px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); font-weight:600; line-height:1.9}
+  .micro strong{color:var(--volt)}
+  .foot{padding:0 20px; font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted)}
+  @media (prefers-reduced-motion:reduce){ .marquee span{animation:none} }
+</style>
+</head>
+<body>
+<div class="poster">
+
+  <p class="eyebrow">Your Beginner Running Plan</p>
+  <h1 class="headline">First<br>5K</h1>
+  <p class="subline">Earn the 5K. Walk. Run. Repeat.</p>
+
+  <hr class="rule volt-rule">
+
+  <!-- SPOTIFY -->
+  <div class="section music">
+    <p class="label">Soundtrack — Running 140bpm – 160bpm</p>
+    <div class="music" style="margin-top:12px">
+      <iframe src="https://open.spotify.com/embed/playlist/6shxjmkV8vApMS1elKcpHv" height="80" title="Spotify playlist preview"></iframe>
+      <div class="music-row">
+        <p class="music-note">Embed = Preview only (30-sec clips, Spotify limit).</p>
+        <a class="btn ghost" href="https://open.spotify.com/playlist/6shxjmkV8vApMS1elKcpHv">Full songs</a>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- CURRENT WORKOUT -->
+  <div class="section">
+    <p class="kicker" style="padding:0">Today's Session</p>
+    <h2 class="headline"><span class="volt">Week 3</span><br>Run 2</h2>
+    <p class="subline" style="padding-left:0; padding-right:0">~31 min · Run/Walk intervals</p>
+
+    <div class="block-list">
+      <div class="block">
+        <span class="dur volt">5 min</span>
+        <span class="what">Brisk walk<br>Warmup</span>
+      </div>
+      <div class="block">
+        <span class="dur">3 min run</span>
+        <span class="what">90-sec walk × 4<br>Main set</span>
+      </div>
+      <div class="block">
+        <span class="dur ember">5 min</span>
+        <span class="what">Easy walk<br>Cooldown</span>
+      </div>
+    </div>
+
+    <p class="structure">5 MIN WALK <span class="v">/</span> 3 MIN RUN × 4 <span class="v">/</span> 5 MIN WALK</p>
+
+    <button class="btn big" id="startBtn" type="button">Start Workout</button>
+    <p class="copy muted" id="statusLine" style="text-transform:uppercase; letter-spacing:.1em; font-size:12px; font-weight:600">Ready when you are. No perfect start exists.</p>
+  </div>
+
+  <div class="marquee" aria-hidden="true">
+    <span>Walk. Run. Repeat. &nbsp;—&nbsp; Earn the 5K. &nbsp;—&nbsp; Walk. Run. Repeat. &nbsp;—&nbsp; Earn the 5K. &nbsp;—&nbsp;</span><span>Walk. Run. Repeat. &nbsp;—&nbsp; Earn the 5K. &nbsp;—&nbsp; Walk. Run. Repeat. &nbsp;—&nbsp; Earn the 5K. &nbsp;—&nbsp;</span>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="section">
+    <p class="label">Proof of work</p>
+    <p class="big-num">WEEK <span class="volt">3</span> / 9</p>
+    <div class="stats">
+      <div class="stat"><p class="n">8</p><p class="t">Runs completed</p></div>
+      <div class="stat"><p class="n plain">2.4 km</p><p class="t">Best distance</p></div>
+      <div class="stat"><p class="n plain">7:12</p><p class="t">Best pace /km</p></div>
+      <div class="stat"><p class="n">2 wk</p><p class="t">Current streak</p></div>
+    </div>
+    <p class="copy">Eight runs in. Your legs already know more than they did in Week 1. Week 3 is where the run intervals start feeling like running instead of surviving.</p>
+  </div>
+
+  <hr class="rule">
+
+  <!-- ROUTE -->
+  <div class="section">
+    <p class="label">02 — Your route, roughly</p>
+    <div class="map-wrap">
+      <p class="map-cap">Last route · 2.4 km</p>
+      <svg viewBox="0 0 335 150" width="100%" height="150" role="img" aria-label="Route map of last run">
+        <rect width="335" height="150" fill="#101014"/>
+        <g stroke="#2a2a32" stroke-width="1">
+          <line x1="0" y1="37" x2="335" y2="37"/><line x1="0" y1="75" x2="335" y2="75"/>
+          <line x1="0" y1="112" x2="335" y2="112"/>
+          <line x1="84" y1="0" x2="84" y2="150"/><line x1="168" y1="0" x2="168" y2="150"/>
+          <line x1="252" y1="0" x2="252" y2="150"/>
+        </g>
+        <polyline points="28,118 70,100 95,110 130,72 160,80 195,52 225,62 258,34 292,48 308,30"
+                  fill="none" stroke="#cdea44" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="28" cy="118" r="7" fill="#f9612b"/>
+        <circle cx="308" cy="30" r="7" fill="#f9612b"/>
+        <circle cx="308" cy="30" r="11" fill="none" stroke="#f9612b" stroke-width="2"/>
+      </svg>
+    </div>
+    <p class="copy muted">Same loop, one minute faster than last time. The map doesn't care about your pace — it just keeps your receipts.</p>
+  </div>
+
+  <hr class="rule volt-rule">
+
+  <p class="micro">
+    <strong>01 —</strong> Lace up before your brain negotiates.<br>
+    <strong>02 —</strong> The first minute lies. It always feels harder than it is.<br>
+    <strong>03 —</strong> Walk breaks are strategy, not surrender.<br>
+    <strong>04 —</strong> Finish the interval you're in. That's the whole job.
+  </p>
+
+  <p class="foot">First 5K · Week 3 · Run 2 — Prototype layout 5 of 7</p>
+
+</div>
+
+<script>
+  var started = false;
+  document.getElementById('startBtn').addEventListener('click', function(){
+    started = !started;
+    this.textContent = started ? 'Pause Workout' : 'Start Workout';
+    document.getElementById('statusLine').textContent = started
+      ? 'Clock is running. First interval: 5-min brisk walk.'
+      : 'Paused. The run waits. It always waits.';
+  });
+</script>
+</body>
+</html>
