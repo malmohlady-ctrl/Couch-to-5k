@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>First 5K — Layout Options</title>
+<style>
+:root{--bg:#0c0c0f;--card:#15151a;--ink:#f4f4f6;--muted:#9d9da8;--volt:#cdea44;--ember:#f9612b;--line:#2a2a32}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{padding:28px 20px 8px;max-width:760px;margin:auto}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--muted);font-weight:700}
+h1{font-size:34px;letter-spacing:-.04em;margin:8px 0 4px;font-weight:800}
+header p{color:var(--muted);margin:0 0 6px}
+main{padding:14px 20px 40px;max-width:760px;margin:auto;display:grid;gap:12px}
+.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--volt)}
+.num{font-size:12px;letter-spacing:.12em;color:var(--volt);font-weight:800}
+.card h2{margin:6px 0 4px;font-size:22px;letter-spacing:-.02em;font-weight:800}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card .go{display:inline-block;margin-top:10px;font-size:13px;font-weight:750;color:#0c0c0f;background:var(--volt);border-radius:10px;padding:8px 14px}
+footer{max-width:760px;margin:auto;padding:0 20px 30px;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+<header>
+<div class="eyebrow">FIRST 5K · APP REDESIGN</div>
+<h1>Layout options</h1>
+<p>7 directions for the new app layout. Open each on your phone and pick the one that feels right.</p>
+</header>
+<main>
+<a class="card" href="layout-1-minimalist.html"><div class="num">OPTION 1</div><h2>Minimalist — "Just run."</h2><p>One focus per screen: giant timer, one Start button, everything else tucked behind a single "More" disclosure. Maximum breathing room.</p><span class="go">Open prototype</span></a>
+<a class="card" href="layout-2-dashboard.html"><div class="num">OPTION 2</div><h2>Dashboard</h2><p>Options-heavy athletic grid: stat tiles, workout hero, week-plan strip, music card, map snapshot, settings. Everything glanceable.</p><span class="go">Open prototype</span></a>
+<a class="card" href="layout-3-map-first.html"><div class="num">OPTION 3</div><h2>Map-first</h2><p>Full-screen route map hero with a floating glass timer card — live km, pace and time over the route. Strava energy.</p><span class="go">Open prototype</span></a>
+<a class="card" href="layout-4-bottom-nav.html"><div class="num">OPTION 4</div><h2>Bottom-nav</h2><p>True native-app feel: 4 thumb-friendly tabs (Today / Plan / Map / Music), one compact screen each, no long scroll.</p><span class="go">Open prototype</span></a>
+<a class="card" href="layout-5-typographic.html"><div class="num">OPTION 5</div><h2>Typographic</h2><p>Brutalist Nike-ad energy: massive condensed type, aggressive motivational microcopy, volt-on-black poster look.</p><span class="go">Open prototype</span></a>
+<a class="card" href="layout-6-card-deck.html"><div class="num">OPTION 6</div><h2>Card-deck</h2><p>The workout as swipeable full-screen cards — Warmup, Intervals, Cooldown, Done — with progress dots. One card at a time.</p><span class="go">Open prototype</span></a>
+<a class="card" href="layout-7-compact.html"><div class="num">OPTION 7</div><h2>Compact</h2><p>The entire workout above the fold on a phone screen: timer, controls, up-next, mini stats. Zero scroll.</p><span class="go">Open prototype</span></a>
+</main>
+<footer>All prototypes are standalone files — no accounts, no servers. Spotify embeds play 30-second previews; the "Full songs" button opens the playlist properly.</footer>
+</body>
+</html>
