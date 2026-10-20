@@ -1,5 +1,5 @@
 /* First 5K service worker — cache-first offline support */
-const CACHE = "first5k-v25";
+const CACHE = "first5k-v26";
 
 const ASSETS = [
   "./",
@@ -7,7 +7,6 @@ const ASSETS = [
   "manifest.json",
   "player.js",
   "player.css",
-  "music/playlist.json",
   "icon-192.png",
   "icon-512.png",
   "icon-maskable-512.png",
