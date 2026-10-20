@@ -396,7 +396,7 @@ $("importFile").addEventListener("change",e=>{
 });
 $("resetBtn").addEventListener("click",()=>{if(confirm("Reset all saved progress? This cannot be undone unless you exported a backup.")){state={completed:[],selectedWeek:0,selectedRun:0};save();stopTimer();fillSelectors();loadWorkout()}});
 fillSelectors();loadWorkout();
-renderVoice();if(window.AppMusic)AppMusic.init({mount:"musicMount",storageKey:"appmusic.first5k",appName:"Couch to 5K"});
+renderVoice();if(window.AppMusic)AppMusic.init({mount:"musicMount",storageKey:"appmusic.first5k",appName:"Couch to 5K",clientId:"dd308f122d634c94a2ef16df478f3783",playlistId:"3ETB46pxe9p8uaCgji0xbY"});
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&running&&!paused){tick();if(running)keepAwake(true)}});
 if("serviceWorker"in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
 </script>
