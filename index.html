@@ -163,7 +163,7 @@ function loadWorkout(){
 }
 function tone(freq=700,duration=.18){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ctx=new C();const o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.value=freq;g.gain.value=.07;o.connect(g);g.connect(ctx.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);o.stop(ctx.currentTime+duration);setTimeout(()=>ctx.close(),duration*1000+100)}catch(e){}}
 const prefKey="first5k.prefs.v1";
-const DEFAULT_PLAYLIST="https://open.spotify.com/playlist/742s0LCNE7KlKvjb63n3ie";
+const DEFAULT_PLAYLIST="https://open.spotify.com/playlist/3ETB46pxe9p8uaCgji0xbY";
 let prefs={voiceURI:"",rate:.92,spotify:DEFAULT_PLAYLIST};
 try{const sp=JSON.parse(localStorage.getItem(prefKey)||"null");if(sp)prefs={...prefs,...sp}}catch(e){}
 function savePrefs(){try{localStorage.setItem(prefKey,JSON.stringify(prefs))}catch(e){}}
