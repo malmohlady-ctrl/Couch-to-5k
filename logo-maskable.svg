@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgF" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1e1712"/>
+      <stop offset="1" stop-color="#171310"/>
+    </linearGradient>
+    <linearGradient id="voltF" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffa14d"/>
+      <stop offset="1" stop-color="#ff7a1a"/>
+    </linearGradient>
+    <linearGradient id="fireF" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffb37a"/>
+      <stop offset="1" stop-color="#ff7a1a"/>
+    </linearGradient>
+    <clipPath id="clipF"><rect width="512" height="512" rx="112"/></clipPath>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bgF)"/><g transform="translate(51.2,51.2) scale(0.8)">
+  <g clip-path="url(#clipF)">
+    <rect x="-40" y="200" width="345" height="60" rx="30" fill="url(#fireF)" opacity="0.32" transform="rotate(-18 256 256)"/>
+  </g>
+  <text x="256" y="102" text-anchor="middle" font-family="system-ui, sans-serif" font-size="36" font-weight="700" letter-spacing="12" fill="#f7ede3">COUCH TO</text>
+  <text x="210" y="292" text-anchor="middle" font-family="system-ui, sans-serif" font-size="168" font-weight="900" font-style="italic" fill="url(#voltF)">5</text>
+  <text x="322" y="292" text-anchor="middle" font-family="system-ui, sans-serif" font-size="168" font-weight="900" font-style="italic" fill="#f7ede3">K</text>
+  <path d="M150 428 C 210 426, 225 392, 292 394 S 350 428, 374 440" stroke="url(#fireF)" stroke-width="12" stroke-dasharray="1 21" stroke-linecap="round" fill="none"/>
+  <g fill="#f7ede3" opacity="0.92" transform="translate(42,402) scale(0.88)">
+    <rect x="0" y="26" width="104" height="24" rx="10"/>
+    <rect x="0" y="0" width="104" height="34" rx="12"/>
+    <rect x="-12" y="18" width="20" height="46" rx="9"/>
+    <rect x="96" y="18" width="20" height="46" rx="9"/>
+  </g>
+  <g transform="translate(250,248) scale(0.55)" stroke="#f7ede3" stroke-width="26" stroke-linecap="round" fill="none">
+    <circle cx="352" cy="118" r="24" fill="#f7ede3" stroke="none"/>
+    <path d="M340 160 L308 250"/>
+    <path d="M336 176 L376 200 L352 232"/>
+    <path d="M336 176 L300 208 L318 236"/>
+    <path d="M308 250 L360 282 L352 344"/>
+    <path d="M308 250 L262 292 L214 330"/>
+  </g>
+
+</g></svg>
