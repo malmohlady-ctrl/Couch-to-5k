@@ -116,3 +116,5 @@ self.addEventListener("fetch", (event) => {
       .then((cached) => cached || fetch(event.request))
   );
 });
+
+/* pages build refresh 2026-10-20 */
