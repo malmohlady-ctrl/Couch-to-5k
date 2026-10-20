@@ -136,7 +136,7 @@ function workoutKey(w,r){return (w+1)+"-"+(r+1)}
 function isDone(w,r){return state.completed.some(x=>x.key===workoutKey(w,r))}
 function selectedDone(){return isDone(state.selectedWeek,state.selectedRun)}
 function fillSelectors(){
- $("weekSelect").innerHTML=plans.map((p,i)=>`<option value="${i}">${p.title}</option>`).join("");
+ $("weekSelect").innerHTML=plans.map((p,i)=>`<option value="${i}">Wk ${i+1}</option>`).join("");
  $("weekSelect").value=state.selectedWeek;$("runSelect").value=state.selectedRun;
 }
 function totalFor(s){return s.reduce((a,x)=>a+x.secs,0)}
