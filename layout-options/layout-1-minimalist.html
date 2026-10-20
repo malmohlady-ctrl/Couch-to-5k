@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>First 5K — Minimalist</title>
+<style>
+:root{
+  --bg:#0c0c0f;
+  --card:#15151a;
+  --ink:#f4f4f6;
+  --muted:#9d9da8;
+  --volt:#cdea44;
+  --ember:#f9612b;
+  --line:#2a2a32;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  max-width:420px;
+  margin:0 auto;
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  -webkit-font-smoothing:antialiased;
+}
+/* ---------- top bar ---------- */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 20px;
+  border-bottom:1px solid var(--line);
+}
+.wordmark{
+  font-weight:800;
+  font-size:15px;
+  letter-spacing:-0.02em;
+}
+.wordmark .k{color:var(--volt)}
+.glyph-btn{
+  background:none;
+  border:none;
+  color:var(--muted);
+  font-size:20px;
+  line-height:1;
+  padding:6px;
+  cursor:pointer;
+  letter-spacing:0;
+}
+.glyph-btn:active{color:var(--volt)}
+/* ---------- hero ---------- */
+.hero{
+  padding:40px 24px 12px;
+  text-align:center;
+}
+.eyebrow{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+.hero h1{
+  font-size:30px;
+  font-weight:800;
+  letter-spacing:-0.03em;
+  margin-bottom:28px;
+}
+.timer{
+  font-size:84px;
+  font-weight:800;
+  letter-spacing:-0.04em;
+  line-height:1;
+  color:var(--ink);
+  font-variant-numeric:tabular-nums;
+  margin-bottom:10px;
+}
+.phase{
+  font-size:15px;
+  color:var(--muted);
+  font-weight:600;
+  letter-spacing:.02em;
+}
+.phase .dot{
+  display:inline-block;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--ember);
+  margin-right:8px;
+  vertical-align:1px;
+}
+.phase.running .dot{background:var(--volt)}
+/* ---------- primary action ---------- */
+.cta-wrap{padding:28px 24px 8px;text-align:center}
+.btn-primary{
+  display:inline-block;
+  width:100%;
+  max-width:320px;
+  background:var(--volt);
+  color:#0c0c0f;
+  border:none;
+  border-radius:14px;
+  font-size:17px;
+  font-weight:750;
+  padding:18px 0;
+  cursor:pointer;
+  letter-spacing:-0.01em;
+}
+.btn-primary:active{transform:scale(.98)}
+.btn-secondary{
+  display:inline-block;
+  width:100%;
+  max-width:320px;
+  background:#222a10;
+  color:var(--volt);
+  border:none;
+  border-radius:14px;
+  font-size:15px;
+  font-weight:700;
+  padding:14px 0;
+  cursor:pointer;
+  margin-top:12px;
+}
+/* ---------- summary ---------- */
+.summary{
+  padding:24px 28px 8px;
+  text-align:center;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.9;
+}
+.summary .wk{color:var(--ink);font-weight:700}
+.summary .divider{color:#3a3a44;margin:0 10px}
+/* ---------- music (slim, collapsible) ---------- */
+.music{padding:12px 20px 0}
+.music-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 2px;
+  cursor:pointer;
+  user-select:none;
+}
+.music-head .label{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color:var(--muted);
+}
+.music-head .chev{
+  color:var(--muted);
+  font-size:14px;
+  transition:transform .2s;
+}
+.music.open .music-head .chev{transform:rotate(180deg)}
+.music-body{display:none;padding:2px 0 6px}
+.music.open .music-body{display:block}
+.music-body iframe{
+  width:100%;
+  height:80px;
+  border:none;
+  border-radius:12px;
+  display:block;
+  background:#181818;
+}
+.music-caption{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:8px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.music-caption .tag{
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:2px 8px;
+  font-size:11px;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.open-spotify{
+  display:inline-block;
+  margin-top:10px;
+  background:#222a10;
+  color:var(--volt);
+  font-size:13px;
+  font-weight:700;
+  text-decoration:none;
+  border-radius:14px;
+  padding:10px 18px;
+}
+/* ---------- more disclosure ---------- */
+.more{padding:16px 20px 40px}
+.more-head{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:14px 0;
+  cursor:pointer;
+  user-select:none;
+}
+.more-head .label{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color:var(--muted);
+}
+.more-head .chev{color:var(--muted);font-size:14px;transition:transform .2s}
+.more.open .more-head .chev{transform:rotate(180deg)}
+.more-body{display:none}
+.more.open .more-body{display:block}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:14px;
+}
+.card h2{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  color:var(--muted);
+  font-weight:700;
+  margin-bottom:12px;
+}
+.plan-row{
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
+  padding:7px 0;
+  border-bottom:1px solid var(--line);
+}
+.plan-row:last-child{border-bottom:none}
+.plan-row .dur{color:var(--volt);font-weight:700;font-variant-numeric:tabular-nums}
+.stat-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.stat{
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:14px;
+}
+.stat .v{
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-0.03em;
+  color:var(--ink);
+}
+.stat .v.volt{color:var(--volt)}
+.stat .k{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  color:var(--muted);
+  margin-top:4px;
+}
+.map svg{display:block;width:100%;height:auto;border-radius:12px;background:#101014}
+/* ---------- footer ---------- */
+.footer{
+  margin-top:auto;
+  padding:18px;
+  text-align:center;
+  font-size:11px;
+  color:#55555f;
+  letter-spacing:.04em;
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wordmark">First <span class="k">5K</span></div>
+  <button class="glyph-btn" aria-label="Menu">&#9776;</button>
+</header>
+
+<main>
+  <section class="hero">
+    <p class="eyebrow">Your beginner running plan</p>
+    <h1>First 5K</h1>
+    <div class="timer" id="timer">31:00</div>
+    <p class="phase" id="phase"><span class="dot"></span>Ready &mdash; 5-min brisk walk first</p>
+  </section>
+
+  <div class="cta-wrap">
+    <button class="btn-primary" id="startBtn">Start</button>
+    <button class="btn-secondary" id="resetBtn" style="display:none">Reset</button>
+  </div>
+
+  <section class="summary">
+    <span class="wk">Week 3 &middot; Run 2</span><span class="divider">/</span>5-min warmup walk, 3-min run / 90-sec walk &times;4, 5-min cooldown
+  </section>
+
+  <section class="music" id="music">
+    <div class="music-head" id="musicHead">
+      <span class="label">Music &middot; Running 140bpm &ndash; 160bpm</span>
+      <span class="chev">&#9662;</span>
+    </div>
+    <div class="music-body">
+      <iframe src="https://open.spotify.com/embed/playlist/6shxjmkV8vApMS1elKcpHv" height="80" title="Spotify playlist preview"></iframe>
+      <div class="music-caption">
+        <span class="tag">Preview &middot; 30-sec clips</span>
+      </div>
+      <a class="open-spotify" href="https://open.spotify.com/playlist/6shxjmkV8vApMS1elKcpHv" target="_blank" rel="noopener">Full songs &mdash; Open in Spotify</a>
+    </div>
+  </section>
+
+  <section class="more" id="more">
+    <div class="more-head" id="moreHead">
+      <span class="label">More</span>
+      <span class="chev">&#9662;</span>
+    </div>
+    <div class="more-body">
+      <div class="card">
+        <h2>Today&rsquo;s plan</h2>
+        <div class="plan-row"><span>Brisk walk warmup</span><span class="dur">5:00</span></div>
+        <div class="plan-row"><span>Run 3 min / walk 90 sec</span><span class="dur">&times;4</span></div>
+        <div class="plan-row"><span>Cooldown walk</span><span class="dur">5:00</span></div>
+        <div class="plan-row"><span>Total</span><span class="dur">~31:00</span></div>
+      </div>
+      <div class="card">
+        <h2>Your progress</h2>
+        <div class="stat-grid">
+          <div class="stat"><div class="v volt">3<span style="font-size:14px">/9</span></div><div class="k">Week</div></div>
+          <div class="stat"><div class="v">8</div><div class="k">Runs done</div></div>
+          <div class="stat"><div class="v">2.4<span style="font-size:14px"> km</span></div><div class="k">Best distance</div></div>
+          <div class="stat"><div class="v">7:12<span style="font-size:14px"> /km</span></div><div class="k">Best pace</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Last route</h2>
+        <div class="map">
+          <svg viewBox="0 0 335 150" role="img" aria-label="Stylized map of your last route">
+            <rect width="335" height="150" fill="#101014"/>
+            <g stroke="#1d1d24" stroke-width="1">
+              <line x1="0" y1="38" x2="335" y2="38"/>
+              <line x1="0" y1="78" x2="335" y2="78"/>
+              <line x1="0" y1="118" x2="335" y2="118"/>
+              <line x1="84" y1="0" x2="84" y2="150"/>
+              <line x1="168" y1="0" x2="168" y2="150"/>
+              <line x1="252" y1="0" x2="252" y2="150"/>
+            </g>
+            <polyline points="40,110 70,95 95,100 120,70 150,75 175,50 205,58 235,40 265,55 300,45"
+                      fill="none" stroke="#cdea44" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="40" cy="110" r="6" fill="#f9612b"/>
+            <circle cx="300" cy="45" r="6" fill="#f9612b"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">STREAK 2 WEEKS &middot; KEEP IT SIMPLE</footer>
+
+<script>
+(function(){
+  var total = 31*60;            // 31:00 demo countdown
+  var left = total;
+  var iv = null;
+  var timer = document.getElementById('timer');
+  var phase = document.getElementById('phase');
+  var startBtn = document.getElementById('startBtn');
+  var resetBtn = document.getElementById('resetBtn');
+
+  function fmt(s){
+    var m = Math.floor(s/60), sec = s%60;
+    return (m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
+  }
+  function render(){ timer.textContent = fmt(left); }
+
+  function tick(){
+    if(left<=0){
+      clearInterval(iv); iv=null;
+      startBtn.textContent='Start';
+      phase.classList.remove('running');
+      phase.innerHTML='<span class="dot"></span>Done &mdash; nice work';
+      return;
+    }
+    left--;
+    render();
+    // fake phase labels across the demo run
+    if(left===26*60)      phase.innerHTML='<span class="dot"></span>Running &mdash; interval 1 of 4';
+    else if(left===23*60) phase.innerHTML='<span class="dot"></span>Walking &mdash; recover 90 sec';
+    else if(left===16*60) phase.innerHTML='<span class="dot"></span>Cooldown &mdash; easy walk home';
+  }
+
+  startBtn.addEventListener('click',function(){
+    if(iv){ // pause
+      clearInterval(iv); iv=null;
+      startBtn.textContent='Resume';
+      return;
+    }
+    if(left<=0) left=total;
+    iv=setInterval(tick,1000);
+    startBtn.textContent='Pause';
+    resetBtn.style.display='inline-block';
+    phase.classList.add('running');
+    if(phase.textContent.indexOf('Ready')===0 || phase.textContent.indexOf('Done')===0)
+      phase.innerHTML='<span class="dot"></span>Warmup &mdash; brisk walk, 5 min';
+  });
+
+  resetBtn.addEventListener('click',function(){
+    clearInterval(iv); iv=null;
+    left=total; render();
+    startBtn.textContent='Start';
+    resetBtn.style.display='none';
+    phase.classList.remove('running');
+    phase.innerHTML='<span class="dot"></span>Ready &mdash; 5-min brisk walk first';
+  });
+
+  // disclosures
+  var music=document.getElementById('music');
+  document.getElementById('musicHead').addEventListener('click',function(){
+    music.classList.toggle('open');
+  });
+  var more=document.getElementById('more');
+  document.getElementById('moreHead').addEventListener('click',function(){
+    more.classList.toggle('open');
+  });
+})();
+</script>
+</body>
+</html>
