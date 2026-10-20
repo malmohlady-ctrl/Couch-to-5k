@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
-<title>First 5K — Couch to 5K</title>
+<title>Couch to 5K</title>
 <style>
 :root{--bg:#171310;--card:#221a14;--ink:#f7ede3;--muted:#a89a8a;--primary:#ff7a1a;--primary2:#3a2313;--line:#332920;--accent:#ffb37a;--red:#e05252}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -44,7 +44,7 @@ details summary{cursor:pointer;font-weight:700}iframe{display:block}
 </style>
 </head>
 <body>
-<header><div class="wrap"><div class="eyebrow">Your beginner running plan</div><h1>First 5K</h1><p>Small steps. Three runs a week. Your pace, your progress.</p></div></header>
+<header><div class="wrap"><div class="eyebrow">Your beginner running plan</div><h1>Couch to 5K</h1><p>Small steps. Three runs a week. Your pace, your progress.</p></div></header>
 <nav aria-label="Main navigation">
 <button class="active" data-tab="today">Today</button><button data-tab="plan">Plan</button><button data-tab="progress">Progress</button>
 </nav>
@@ -254,7 +254,7 @@ function initSpotifyPlayer(){
 window.onSpotifyWebPlaybackSDKReady=function(){createSpotifyPlayer();};
 function createSpotifyPlayer(){
  if(spotifyPlayer||!window.Spotify)return;
- spotifyPlayer=new Spotify.Player({name:"First 5K",getOAuthToken:function(cb){spotifyToken().then(function(t){if(t)cb(t);});},volume:0.8});
+ spotifyPlayer=new Spotify.Player({name:"Couch to 5K",getOAuthToken:function(cb){spotifyToken().then(function(t){if(t)cb(t);});},volume:0.8});
  spotifyPlayer.addListener("ready",function(d){spotifyDeviceId=d.device_id;spotifyReady=true;renderSpotifyConnect();});
  spotifyPlayer.addListener("not_ready",function(){spotifyReady=false;spotifyDeviceId=null;renderSpotifyConnect();});
  spotifyPlayer.addListener("player_state_changed",function(st){
@@ -579,7 +579,7 @@ $("importFile").addEventListener("change",e=>{
    state={completed:data.completed,selectedWeek:Math.min(8,Math.max(0,+data.selectedWeek||0)),selectedRun:Math.min(2,Math.max(0,+data.selectedRun||0))};
    save();fillSelectors();loadWorkout();
    alert("Backup restored.");
-  }catch(err){alert("That file isn't a valid First 5K backup. Nothing was changed.");}
+  }catch(err){alert("That file isn't a valid Couch to 5K backup. Nothing was changed.");}
  };
  rd.readAsText(f);
 });
