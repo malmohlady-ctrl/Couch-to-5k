@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First 5K — Dashboard</title>
+<style>
+  :root{
+    --bg:#0c0c0f;
+    --card:#15151a;
+    --ink:#f4f4f6;
+    --muted:#9d9da8;
+    --volt:#cdea44;
+    --ember:#f9612b;
+    --line:#2a2a32;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    max-width:430px;
+    margin:0 auto;
+    padding:16px 16px 40px;
+  }
+  .label{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--muted);
+    font-weight:600;
+    margin:20px 0 10px;
+  }
+  /* ---------- header ---------- */
+  .eyebrow{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--muted);
+    font-weight:600;
+  }
+  .header-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:6px;
+  }
+  .title{
+    font-size:34px;
+    font-weight:800;
+    letter-spacing:-0.04em;
+    line-height:1.05;
+  }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:var(--card);
+    border:1px solid var(--line);
+    color:var(--ink);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.02em;
+    padding:7px 12px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  .badge .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--volt);
+    box-shadow:0 0 8px var(--volt);
+  }
+  /* ---------- stat grid ---------- */
+  .stat-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .stat{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+    cursor:pointer;
+    transition:transform .08s ease,border-color .15s ease;
+    user-select:none;
+  }
+  .stat:active{transform:scale(.97)}
+  .stat.on{border-color:var(--volt)}
+  .stat .k{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--muted);
+    font-weight:600;
+    margin-bottom:8px;
+  }
+  .stat .v{
+    font-size:26px;
+    font-weight:800;
+    letter-spacing:-0.04em;
+    line-height:1;
+  }
+  .stat .v .unit{
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0;
+    color:var(--muted);
+    margin-left:4px;
+  }
+  .stat.volt .v{color:var(--volt)}
+  .stat .sub{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:6px;
+  }
+  /* ---------- workout hero ---------- */
+  .hero{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:18px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute;inset:0;
+    background:radial-gradient(120% 90% at 100% 0%,rgba(205,234,68,.09) 0%,transparent 55%);
+    pointer-events:none;
+  }
+  .hero .chip{
+    display:inline-block;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--bg);
+    background:var(--volt);
+    border-radius:6px;
+    padding:4px 8px;
+    margin-bottom:10px;
+  }
+  .hero h2{
+    font-size:24px;
+    font-weight:800;
+    letter-spacing:-0.04em;
+    margin-bottom:4px;
+  }
+  .hero .meta{
+    font-size:14px;
+    color:var(--muted);
+    margin-bottom:12px;
+  }
+  .hero .structure{
+    font-size:13px;
+    line-height:1.6;
+    color:var(--ink);
+    background:rgba(12,12,15,.55);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 12px;
+    margin-bottom:14px;
+  }
+  .hero .structure b{color:var(--volt);font-weight:750}
+  .btn{
+    display:block;
+    width:100%;
+    border:0;
+    cursor:pointer;
+    background:var(--volt);
+    color:#0c0c0f;
+    font-size:16px;
+    font-weight:750;
+    letter-spacing:-0.01em;
+    padding:14px 16px;
+    border-radius:14px;
+    transition:transform .08s ease,opacity .15s ease;
+  }
+  .btn:active{transform:scale(.98)}
+  .btn.armed{background:var(--ember);color:#0c0c0f}
+  .start-msg{
+    text-align:center;
+    font-size:13px;
+    color:var(--muted);
+    margin-top:10px;
+    min-height:18px;
+  }
+  /* ---------- week strip ---------- */
+  .week{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:8px;
+    margin-bottom:8px;
+  }
+  .day{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:10px 4px;
+    text-align:center;
+  }
+  .day .dow{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+  .day .tag{font-size:11px;font-weight:750;margin-top:6px;letter-spacing:-0.01em}
+  .day.done{border-color:var(--volt)}
+  .day.done .tag{color:var(--volt)}
+  .day.today{border-color:var(--ember);box-shadow:inset 0 0 0 1px var(--ember)}
+  .day.today .tag{color:var(--ember)}
+  .day.rest .tag{color:var(--muted);font-weight:600}
+  .week-note{
+    font-size:13px;
+    color:var(--muted);
+    text-align:center;
+  }
+  .week-note b{color:var(--volt);font-weight:750}
+  /* ---------- cards ---------- */
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:16px;
+  }
+  /* music */
+  .music iframe{
+    width:100%;
+    height:80px;
+    border:0;
+    border-radius:12px;
+    display:block;
+    background:#181818;
+  }
+  .music-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:10px;
+    gap:10px;
+  }
+  .music-cap{
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.45;
+  }
+  .music-cap .prev{
+    display:inline-block;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--bg);
+    background:var(--muted);
+    border-radius:5px;
+    padding:2px 6px;
+    margin-right:6px;
+    vertical-align:1px;
+  }
+  .btn-secondary{
+    background:#222a10;
+    color:var(--volt);
+    border:0;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:750;
+    padding:10px 14px;
+    border-radius:14px;
+    white-space:nowrap;
+    text-decoration:none;
+    transition:transform .08s ease;
+  }
+  .btn-secondary:active{transform:scale(.96)}
+  /* map */
+  .map svg{width:100%;height:auto;display:block;border-radius:12px;background:#101014}
+  .map-meta{
+    display:flex;
+    justify-content:space-between;
+    margin-top:10px;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .map-meta b{color:var(--ink);font-weight:750;letter-spacing:-0.01em}
+  .legend{display:flex;gap:14px;margin-top:8px;font-size:12px;color:var(--muted)}
+  .legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+  /* settings */
+  .settings .row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+    font-size:14px;
+  }
+  .settings .row:last-child{border-bottom:0;padding-bottom:2px}
+  .settings .row:first-child{padding-top:2px}
+  .toggle{
+    width:46px;height:27px;border-radius:999px;
+    background:#2a2a32;border:1px solid var(--line);
+    position:relative;cursor:pointer;transition:background .15s ease;
+  }
+  .toggle::after{
+    content:"";position:absolute;top:2px;left:2px;
+    width:21px;height:21px;border-radius:50%;
+    background:var(--muted);transition:left .15s ease,background .15s ease;
+  }
+  .toggle.on{background:#222a10}
+  .toggle.on::after{left:21px;background:var(--volt)}
+  .chev{color:var(--muted);font-size:16px;font-weight:700}
+</style>
+</head>
+<body>
+
+  <!-- header -->
+  <header>
+    <div class="eyebrow">Your beginner running plan</div>
+    <div class="header-row">
+      <h1 class="title">First 5K</h1>
+      <span class="badge"><span class="dot"></span>Streak · 2 weeks</span>
+    </div>
+  </header>
+
+  <!-- stat tiles -->
+  <div class="label">Training snapshot</div>
+  <div class="stat-grid" id="stats">
+    <div class="stat" data-key="week">
+      <div class="k">Plan progress</div>
+      <div class="v">Week 3<span class="unit">of 9</span></div>
+      <div class="sub">8 runs completed</div>
+    </div>
+    <div class="stat" data-key="streak">
+      <div class="k">Current streak</div>
+      <div class="v">2<span class="unit">weeks</span></div>
+      <div class="sub">last missed: none</div>
+    </div>
+    <div class="stat volt" data-key="pace">
+      <div class="k">Best pace</div>
+      <div class="v">7:12<span class="unit">/km</span></div>
+      <div class="sub">Week 2 · Run 3</div>
+    </div>
+    <div class="stat" data-key="dist">
+      <div class="k">Best distance</div>
+      <div class="v">2.4<span class="unit">km</span></div>
+      <div class="sub">Week 3 · Run 1</div>
+    </div>
+  </div>
+
+  <!-- today's workout -->
+  <div class="label">Today's workout</div>
+  <section class="hero">
+    <span class="chip">Week 3 · Run 2</span>
+    <h2>Intervals, steady</h2>
+    <div class="meta">About 31 min · warm-up → intervals → cooldown</div>
+    <div class="structure">
+      <b>5 min</b> brisk walk warm-up<br>
+      <b>3-min run / 90-sec walk × 4</b><br>
+      <b>5 min</b> cooldown walk
+    </div>
+    <button class="btn" id="startBtn">Start workout</button>
+    <div class="start-msg" id="startMsg" aria-live="polite"></div>
+  </section>
+
+  <!-- music: high in grid -->
+  <div class="label">Warm-up playlist</div>
+  <section class="card music">
+    <iframe src="https://open.spotify.com/embed/playlist/6shxjmkV8vApMS1elKcpHv"
+            height="80" title="Spotify playlist preview" loading="lazy"
+            allow="encrypted-media"></iframe>
+    <div class="music-row">
+      <div class="music-cap">
+        <span class="prev">Preview</span>
+        "Running 140bpm – 160bpm"<br>
+        Embed plays 30-second previews only.
+      </div>
+      <a class="btn-secondary" href="https://open.spotify.com/playlist/6shxjmkV8vApMS1elKcpHv" target="_blank" rel="noopener">Full songs</a>
+    </div>
+  </section>
+
+  <!-- week plan -->
+  <div class="label">Week 3 plan</div>
+  <div class="week" id="week">
+    <div class="day done"><div class="dow">Mon</div><div class="tag">R1</div></div>
+    <div class="day today"><div class="dow">Tue</div><div class="tag">R2</div></div>
+    <div class="day rest"><div class="dow">Wed</div><div class="tag">Rest</div></div>
+    <div class="day"><div class="dow">Thu</div><div class="tag">R3</div></div>
+    <div class="day rest"><div class="dow">Fri</div><div class="tag">Rest</div></div>
+    <div class="day rest"><div class="dow">Sat</div><div class="tag">Rest</div></div>
+    <div class="day rest"><div class="dow">Sun</div><div class="tag">Rest</div></div>
+  </div>
+  <div class="week-note"><b>8 runs completed</b> so far · R1 logged Sunday</div>
+
+  <!-- map -->
+  <div class="label">Last route</div>
+  <section class="card map">
+    <svg viewBox="0 0 343 160" role="img" aria-label="Route snapshot of last run">
+      <rect x="0" y="0" width="343" height="160" rx="12" fill="#101014"/>
+      <g stroke="#1d1d24" stroke-width="1">
+        <line x1="0" y1="40" x2="343" y2="40"/><line x1="0" y1="80" x2="343" y2="80"/><line x1="0" y1="120" x2="343" y2="120"/>
+        <line x1="86" y1="0" x2="86" y2="160"/><line x1="172" y1="0" x2="172" y2="160"/><line x1="258" y1="0" x2="258" y2="160"/>
+      </g>
+      <polyline points="28,132 46,118 62,122 84,104 108,108 128,88 150,92 172,70 196,76 218,58 242,64 264,44 288,52 312,34"
+                fill="none" stroke="#cdea44" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="28" cy="132" r="7" fill="#f9612b"/>
+      <circle cx="312" cy="34" r="7" fill="#f9612b"/>
+      <circle cx="28" cy="132" r="3" fill="#0c0c0f"/>
+      <circle cx="312" cy="34" r="3" fill="#0c0c0f"/>
+    </svg>
+    <div class="map-meta">
+      <div><b>2.4 km</b> · Sun, Week 3 R1</div>
+      <div><b>7:12</b> /km best split</div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--ember)"></i>Start / finish</span>
+      <span><i style="background:var(--volt)"></i>Route</span>
+    </div>
+  </section>
+
+  <!-- settings -->
+  <div class="label">Settings</div>
+  <section class="card settings">
+    <div class="row">
+      <span>Coach voice cues</span>
+      <div class="toggle on" data-toggle role="switch" aria-checked="true" tabindex="0" aria-label="Coach voice cues"></div>
+    </div>
+    <div class="row">
+      <span>Music auto-start</span>
+      <div class="toggle" data-toggle role="switch" aria-checked="false" tabindex="0" aria-label="Music auto-start"></div>
+    </div>
+    <div class="row">
+      <span>Units</span>
+      <span style="color:var(--muted)">Metric (km) <span class="chev">›</span></span>
+    </div>
+    <div class="row">
+      <span>Notifications</span>
+      <span style="color:var(--muted)">Workout reminders <span class="chev">›</span></span>
+    </div>
+  </section>
+
+<script>
+  // stat tiles: tap to highlight
+  document.querySelectorAll('.stat').forEach(function(t){
+    t.addEventListener('click', function(){
+      document.querySelectorAll('.stat').forEach(function(o){ o.classList.remove('on'); });
+      t.classList.add('on');
+    });
+  });
+
+  // fake start flow
+  var started = false;
+  var btn = document.getElementById('startBtn');
+  var msg = document.getElementById('startMsg');
+  btn.addEventListener('click', function(){
+    if(!started){
+      started = true;
+      btn.textContent = 'End workout';
+      btn.classList.add('armed');
+      msg.textContent = 'Warm-up timer started — 5:00 brisk walk.';
+    } else {
+      started = false;
+      btn.textContent = 'Start workout';
+      btn.classList.remove('armed');
+      msg.textContent = 'Workout ended. Week 3 · Run 2 logged.';
+    }
+  });
+
+  // toggles
+  document.querySelectorAll('[data-toggle]').forEach(function(t){
+    function flip(){
+      t.classList.toggle('on');
+      t.setAttribute('aria-checked', t.classList.contains('on') ? 'true' : 'false');
+    }
+    t.addEventListener('click', flip);
+    t.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); flip(); }
+    });
+  });
+</script>
+</body>
+</html>
