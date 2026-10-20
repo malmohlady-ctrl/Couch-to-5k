@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>First 5K — Week 3 · Run 2</title>
+<style>
+  :root{
+    --bg:#0c0c0f;
+    --card:#15151a;
+    --ink:#f4f4f6;
+    --muted:#9d9da8;
+    --volt:#cdea44;
+    --ember:#f9612b;
+    --line:#2a2a32;
+    --secondary:#222a10;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    height:100vh;
+    height:100dvh;
+    max-height:100dvh;
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{
+    height:100vh;
+    height:100dvh;
+    max-height:100dvh;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding:12px 16px 10px;
+    max-width:480px;
+    margin:0 auto;
+  }
+  .label{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--muted);
+    font-weight:600;
+  }
+  /* ---------- header ---------- */
+  .header .eyebrow{margin-bottom:2px;}
+  .header-top{display:flex;align-items:center;justify-content:space-between;}
+  .title{
+    font-size:26px;
+    font-weight:800;
+    letter-spacing:-0.04em;
+    line-height:1.1;
+  }
+  .streak{
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.08em;
+    color:var(--volt);
+    background:var(--secondary);
+    border:1px solid var(--volt);
+    border-radius:999px;
+    padding:5px 10px;
+    white-space:nowrap;
+  }
+  .workout-line{margin-top:3px;font-size:14px;}
+  .workout-line .w{color:var(--volt);font-weight:750;}
+  .workout-line .m{color:var(--muted);}
+  /* ---------- music ---------- */
+  .music-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
+  .music iframe{
+    width:100%;
+    height:80px;
+    border:0;
+    border-radius:12px;
+    display:block;
+    background:var(--card);
+  }
+  .music .open{
+    display:block;
+    text-align:center;
+    text-decoration:none;
+    margin-top:6px;
+    background:var(--secondary);
+    color:var(--volt);
+    font-weight:750;
+    font-size:13px;
+    border-radius:14px;
+    padding:8px 12px;
+  }
+  /* ---------- timer ---------- */
+  .timer{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:10px 14px 12px;
+  }
+  .timer-top{display:flex;align-items:baseline;justify-content:space-between;}
+  .interval-name{font-size:14px;font-weight:800;letter-spacing:.04em;color:var(--volt);}
+  .interval-name.cool{color:var(--ember);}
+  .interval-count{font-size:12px;color:var(--muted);font-weight:600;}
+  .digits{
+    font-size:64px;
+    font-weight:800;
+    letter-spacing:-0.04em;
+    line-height:1.05;
+    font-variant-numeric:tabular-nums;
+    margin:2px 0 1px;
+  }
+  .next-line{font-size:12px;color:var(--muted);font-weight:600;min-height:15px;}
+  .next-line strong{color:var(--ink);}
+  .bar{height:6px;background:var(--line);border-radius:999px;margin-top:8px;overflow:hidden;}
+  .bar i{display:block;height:100%;width:0%;background:var(--volt);border-radius:999px;transition:width .4s linear;}
+  /* ---------- controls ---------- */
+  .controls{display:flex;gap:8px;}
+  .btn{
+    border:0;
+    border-radius:14px;
+    font-size:15px;
+    font-weight:750;
+    padding:13px 0;
+    cursor:pointer;
+  }
+  .btn-primary{background:var(--volt);color:#0c0c0f;flex:2;}
+  .btn-secondary{background:var(--secondary);color:var(--volt);flex:1;}
+  .btn:active{transform:scale(.98);}
+  /* ---------- up next ---------- */
+  .upnext{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;}
+  .upnext .label{margin-bottom:6px;}
+  .row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:7px 8px;
+    border-radius:10px;
+    border-left:3px solid transparent;
+  }
+  .row.current{background:#1c1c22;border-left-color:var(--volt);}
+  .row.next{opacity:.75;}
+  .row .n{flex:1;font-size:13px;font-weight:650;}
+  .row .d{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .tag{
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.08em;
+    padding:3px 8px;
+    border-radius:999px;
+  }
+  .tag.walk{color:var(--muted);background:#1e1e24;}
+  .tag.run{color:#0c0c0f;background:var(--volt);}
+  .tag.cool{color:#0c0c0f;background:var(--ember);}
+  /* ---------- footer stats ---------- */
+  .stats{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;}
+  .stats .label{margin-bottom:6px;}
+  .chips{display:flex;gap:8px;}
+  .chip{flex:1;background:#1c1c22;border-radius:10px;padding:7px 4px;text-align:center;}
+  .chip .v{font-size:15px;font-weight:800;letter-spacing:-0.02em;font-variant-numeric:tabular-nums;}
+  .chip .k{font-size:10px;color:var(--muted);letter-spacing:.08em;font-weight:700;margin-top:2px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="header">
+    <div class="label eyebrow">Your beginner running plan</div>
+    <div class="header-top">
+      <h1 class="title">First 5K</h1>
+      <span class="streak">2-WK STREAK</span>
+    </div>
+    <div class="workout-line"><span class="w">Week 3 · Run 2</span> <span class="m">· 28 min · 10 blocks</span></div>
+  </header>
+
+  <section class="music" aria-label="Music">
+    <div class="music-head">
+      <span class="label">Music</span>
+      <span class="label">Preview</span>
+    </div>
+    <iframe src="https://open.spotify.com/embed/playlist/6shxjmkV8vApMS1elKcpHv"
+            title="Running 140bpm – 160bpm playlist preview"
+            allow="encrypted-media; clipboard-write; fullscreen"
+            loading="lazy"></iframe>
+    <a class="open" href="https://open.spotify.com/playlist/6shxjmkV8vApMS1elKcpHv" target="_blank" rel="noopener">Full songs — Open in Spotify</a>
+  </section>
+
+  <section class="timer" aria-label="Interval timer">
+    <div class="timer-top">
+      <div class="interval-name" id="intervalName">WARMUP · BRISK WALK</div>
+      <div class="interval-count" id="intervalCount">1 / 10</div>
+    </div>
+    <div class="digits" id="digits">05:00</div>
+    <div class="next-line" id="nextLine">Next: <strong>Run</strong> · 3:00</div>
+    <div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+  </section>
+
+  <div class="controls">
+    <button class="btn btn-primary" id="btnStart">Start</button>
+    <button class="btn btn-secondary" id="btnPause">Pause</button>
+    <button class="btn btn-secondary" id="btnSkip">Skip</button>
+  </div>
+
+  <section class="upnext" aria-label="Up next">
+    <div class="label">Up next</div>
+    <div id="rows"></div>
+  </section>
+
+  <footer class="stats" aria-label="Progress">
+    <div class="label">Progress</div>
+    <div class="chips">
+      <div class="chip"><div class="v">3/9</div><div class="k">WEEK</div></div>
+      <div class="chip"><div class="v">8</div><div class="k">RUNS</div></div>
+      <div class="chip"><div class="v">2.4 km</div><div class="k">BEST DIST</div></div>
+      <div class="chip"><div class="v">7:12</div><div class="k">BEST /KM</div></div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var plan = [
+    {n:"WARMUP · BRISK WALK", s:300, t:"walk"},
+    {n:"RUN 1",  s:180, t:"run"},
+    {n:"WALK",   s:90,  t:"walk"},
+    {n:"RUN 2",  s:180, t:"run"},
+    {n:"WALK",   s:90,  t:"walk"},
+    {n:"RUN 3",  s:180, t:"run"},
+    {n:"WALK",   s:90,  t:"walk"},
+    {n:"RUN 4",  s:180, t:"run"},
+    {n:"WALK",   s:90,  t:"walk"},
+    {n:"COOLDOWN · WALK", s:300, t:"cool"}
+  ];
+  var total = plan.reduce(function(a,b){return a+b.s;},0); // 1680 = 28:00
+  var i = 0, rem = plan[0].s, running = false, done = false, id = null;
+
+  var digits = document.getElementById("digits"),
+      nameEl = document.getElementById("intervalName"),
+      countEl = document.getElementById("intervalCount"),
+      nextEl = document.getElementById("nextLine"),
+      barEl  = document.getElementById("barFill"),
+      rowsEl = document.getElementById("rows"),
+      startBtn = document.getElementById("btnStart");
+
+  function mmss(s){
+    s = Math.max(0, Math.round(s));
+    var m = Math.floor(s/60), r = s%60;
+    return (m<10?"0":"")+m + ":" + (r<10?"0":"")+r;
+  }
+  function tag(t){
+    if(t==="run")  return '<span class="tag run">RUN</span>';
+    if(t==="cool") return '<span class="tag cool">COOL</span>';
+    return '<span class="tag walk">WALK</span>';
+  }
+  function render(){
+    var p = plan[i];
+    digits.textContent = done ? "DONE" : mmss(rem);
+    digits.style.color = done ? "var(--volt)" : "var(--ink)";
+    nameEl.textContent = done ? "WORKOUT COMPLETE" : p.n;
+    nameEl.className = "interval-name" + ((done||p.t==="cool") ? " cool" : "");
+    countEl.textContent = done ? "10 / 10" : (i+1) + " / " + plan.length;
+    if(done){
+      nextEl.innerHTML = "Nice work. Cooldown stretches next.";
+    } else if(i+1 < plan.length){
+      nextEl.innerHTML = "Next: <strong>" + plan[i+1].n.charAt(0) + plan[i+1].n.slice(1).toLowerCase() + "</strong> · " + mmss(plan[i+1].s);
+    } else {
+      nextEl.innerHTML = "Last block — finish strong.";
+    }
+    var elapsed = total - plan.slice(i).reduce(function(a,b){return a+b.s;},0) + (p.s - rem);
+    barEl.style.width = (done ? 100 : Math.min(100, elapsed/total*100)) + "%";
+    // up-next rows: current + next 2
+    var html = "";
+    for(var k=0;k<3 && i+k<plan.length;k++){
+      var q = plan[i+k];
+      html += '<div class="row '+(k===0?"current":"next")+'">'
+            + '<span class="n">'+q.n+'</span>'
+            + '<span class="d">'+mmss(q.s)+'</span>'
+            + tag(q.t) + '</div>';
+    }
+    rowsEl.innerHTML = html;
+    startBtn.textContent = done ? "Restart" : (running ? "Running" : (elapsed>0 ? "Resume" : "Start"));
+  }
+  function tick(){
+    if(done) return;
+    rem--;
+    if(rem < 0) advance();
+    render();
+  }
+  function advance(){
+    if(i+1 < plan.length){
+      i++; rem = plan[i].s;
+    } else {
+      done = true; stop();
+    }
+  }
+  function start(){
+    if(done){ i=0; rem=plan[0].s; done=false; }
+    if(running) return;
+    running = true;
+    id = setInterval(tick, 1000);
+    render();
+  }
+  function stop(){
+    running = false;
+    if(id){ clearInterval(id); id = null; }
+  }
+  startBtn.addEventListener("click", function(){ start(); });
+  document.getElementById("btnPause").addEventListener("click", function(){ stop(); render(); });
+  document.getElementById("btnSkip").addEventListener("click", function(){ if(!done){ advance(); render(); } });
+  render();
+})();
+</script>
+</body>
+</html>
