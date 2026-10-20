@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgD" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2e1c5c"/>
+      <stop offset="1" stop-color="#140f2a"/>
+    </linearGradient>
+    <linearGradient id="goldD" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd873"/>
+      <stop offset="1" stop-color="#efa93a"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bgD)"/>
+  <ellipse cx="256" cy="260" rx="230" ry="170" fill="#5b2dcc" opacity="0.32"/>
+  <text x="256" y="108" text-anchor="middle" font-family="system-ui, sans-serif" font-size="38" font-weight="700" letter-spacing="14" fill="#ffffff">COUCH TO</text>
+  <text x="170" y="378" text-anchor="middle" font-family="system-ui, sans-serif" font-size="235" font-weight="900" font-style="italic" fill="url(#goldD)">5</text>
+  <g transform="translate(319,237) scale(0.80)" stroke="#ffffff" stroke-width="30" stroke-linecap="round" fill="none">
+    <circle cx="8" cy="-102" r="23" fill="#ffffff" stroke="none"/>
+    <path d="M0 -72 L0 72"/>
+    <path d="M2 -38 L38 -62 L62 -44"/>
+    <path d="M2 -38 L-16 -18 L-2 8"/>
+    <path d="M0 72 L12 116 L6 158"/>
+    <path d="M0 72 L52 102 L88 138"/>
+  </g>
+  <path d="M150 408 C 210 408, 215 352, 278 342" stroke="url(#goldD)" stroke-width="12" stroke-dasharray="1 21" stroke-linecap="round" fill="none"/>
+  <g fill="#ffffff" opacity="0.92" transform="translate(35,415) scale(0.85)">
+    <rect x="0" y="26" width="104" height="24" rx="10"/>
+    <rect x="0" y="0" width="104" height="34" rx="12"/>
+    <rect x="-12" y="18" width="20" height="46" rx="9"/>
+    <rect x="96" y="18" width="20" height="46" rx="9"/>
+  </g>
+</svg>
