@@ -93,10 +93,10 @@ details summary{cursor:pointer;font-weight:700}iframe{display:block}
 <div class="card"><h3>How to progress</h3><p class="muted">The goal is consistency, not speed. Keep running intervals easy, take walking breaks as prescribed, and repeat a week whenever you need more time.</p></div>
 </section>
 <section id="progress" class="panel">
-<div class="card"><h2>Your progress</h2><div class="statgrid"><div class="stat"><strong id="doneCount">0</strong><span>Runs completed</span></div><div class="stat"><strong id="weekCount">0/3</strong><span>This week's runs</span></div><div class="stat"><strong id="streakCount">0</strong><span>Weeks completed</span></div></div><hr><div class="row between"><h3>Workout history</h3><button class="secondary small" id="exportBtn">Export data</button></div><div id="historyList" class="muted small">Complete your first workout to see it here.</div><hr><button class="danger full" id="resetBtn">Reset all progress</button><p class="small muted">Progress is saved on this device in this browser. Clearing browser data or switching devices may erase it. Export a backup occasionally.</p></div>
+<div class="card"><h2>Your progress</h2><div class="statgrid"><div class="stat"><strong id="doneCount">0</strong><span>Runs completed</span></div><div class="stat"><strong id="weekCount">0/3</strong><span>This week's runs</span></div><div class="stat"><strong id="streakCount">0</strong><span>Weeks completed</span></div></div><hr><div class="row between"><h3>Workout history</h3><button class="secondary small" id="exportBtn">Export data</button></div><div id="historyList" class="muted small">Complete your first workout to see it here.</div><hr><button class="secondary full" id="importBtn" style="margin-bottom:8px">Restore from backup</button><input type="file" id="importFile" accept="application/json,.json" style="display:none"><button class="danger full" id="resetBtn">Reset all progress</button><p class="small muted">Progress is saved on this device in this browser. Clearing browser data or switching devices may erase it. Export a backup occasionally.</p></div>
 </section>
 </main>
-<footer>Free, self-contained beginner tool · No account, subscription, GPS or data sent to a server.</footer>
+<footer>Free, self-contained beginner tool · No account or subscription. Your GPS track never leaves your phone — street maps load from CARTO only while you're online.</footer>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const plans = [
@@ -195,7 +195,7 @@ const SPOTIFY_CLIENT_ID = "dd308f122d634c94a2ef16df478f3783";
 const SPOTIFY_REDIRECT_URI = "https://malmohlady-ctrl.github.io/Couch-to-5k/";
 const SPOTIFY_SCOPES = ["streaming","user-read-playback-state","user-modify-playback-state","user-read-currently-playing"].join(" ");
 const SPOTIFY_TOKEN_KEY = "first5k_spotify_tokens";
-let spotifyPlayer = null, spotifyDeviceId = null, spotifyReady = false, spotifyTrack = "", spotifyTrackName = "", spotifyTrackArtists = "", spotifyArtwork = "", spotifyPaused = true, spotifyTrackUri = "", spotifyPlaylistTracks = [], spotifyTracksLoading = false, spListOpen = false;
+let spotifyPlayer = null, spotifyDeviceId = null, spotifyReady = false, spotifyTrack = "", spotifyTrackName = "", spotifyTrackArtists = "", spotifyArtwork = "", spotifyPaused = true, spotifyTrackUri = "", spotifyPlaylistTracks = [], spotifyTracksLoading = false, spotifyTracksLoaded = false, spotifyTracksError = "", spListOpen = false;
 function escHtml(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function spotifySetupDone(){return SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_ID.indexOf("PASTE")!==0;}
 function spotifyTokens(){try{return JSON.parse(localStorage.getItem(SPOTIFY_TOKEN_KEY)||"null");}catch(e){return null;}}
@@ -286,18 +286,23 @@ function spotifyPlaylistId(){
  return m?{kind:m[1],id:m[2]}:null;
 }
 async function spotifyLoadPlaylist(){
- if(spotifyTracksLoading)return;spotifyTracksLoading=true;
- spotifyPlaylistTracks=[];
- const tok=await spotifyToken(),pl=spotifyPlaylistId();
- if(tok&&pl){
-  try{
+ if(spotifyTracksLoading||spotifyTracksLoaded)return;spotifyTracksLoading=true;
+ spotifyPlaylistTracks=[];spotifyTracksError="";
+ try{
+  const tok=await spotifyToken(),pl=spotifyPlaylistId();
+  if(!tok){spotifyTracksError="Couldn't load tracks — your Spotify sign-in needs attention. Disconnect and reconnect, or check your connection.";}
+  else if(!pl){spotifyTracksError="That playlist link looks wrong. Paste a Spotify playlist or album link below.";}
+  else{
    const ep=pl.kind==="album"?"albums":"playlists";
    const res=await fetch("https://api.spotify.com/v1/"+ep+"/"+pl.id+"/tracks?fields=items(track(name,artists(name),uri))&limit=50",{headers:{Authorization:"Bearer "+tok}});
-   const data=await res.json();
-   spotifyPlaylistTracks=(data.items||[]).map(function(i){return i.track;}).filter(Boolean).map(function(t){return{name:t.name,artists:t.artists.map(function(a){return a.name;}).join(", "),uri:t.uri};});
-  }catch(e){}
- }
- spotifyTracksLoading=false;renderSpotifyConnect();
+   if(!res.ok){spotifyTracksError="Spotify couldn't return those tracks (error "+res.status+"). Play and pause still work from the player above.";}
+   else{
+    const data=await res.json();
+    spotifyPlaylistTracks=(data.items||[]).map(function(i){return i.track;}).filter(Boolean).map(function(t){return{name:t.name,artists:t.artists.map(function(a){return a.name;}).join(", "),uri:t.uri};});
+   }
+  }
+ }catch(e){spotifyTracksError="Couldn't load tracks — check your connection and try again.";}
+ spotifyTracksLoading=false;spotifyTracksLoaded=true;renderSpotifyConnect();
 }
 async function spotifyPlayTrack(uri){
  const plUri=spotifyPlaylistUri();
@@ -305,7 +310,9 @@ async function spotifyPlayTrack(uri){
  else await spotifyApi("play","PUT",{uris:[uri]});
 }
 function renderTrackList(){
- if(!spotifyPlaylistTracks.length)return "";
+ if(spotifyTracksLoading)return '<div style="margin-top:8px;background:#161616;border-radius:14px;padding:14px"><p style="margin:0;font-size:13px;color:#9a9a9a">Loading tracks…</p></div>';
+ if(spotifyTracksError)return '<div style="margin-top:8px;background:#161616;border-radius:14px;padding:14px"><p style="margin:0 0 8px;font-size:13px;color:#e8b4b4">'+escHtml(spotifyTracksError)+'</p><button id="spRetry" type="button" style="background:#fff;color:#161616;border:0;border-radius:10px;padding:8px 14px;font-weight:800;cursor:pointer">Try again</button></div>';
+ if(!spotifyPlaylistTracks.length)return '<div style="margin-top:8px;background:#161616;border-radius:14px;padding:14px"><p style="margin:0;font-size:13px;color:#9a9a9a">This playlist is empty.</p></div>';
  let h='<div id="spTrackList" style="margin-top:8px;max-height:240px;overflow-y:auto;background:#161616;border-radius:14px;padding:8px">';
  for(let i=0;i<spotifyPlaylistTracks.length;i++){
   const t=spotifyPlaylistTracks[i],active=t.uri===spotifyTrackUri;
@@ -315,7 +322,7 @@ function renderTrackList(){
  }
  return h+'</div>';
 }
-function spotifyDisconnect(){try{spotifyPlayer&&spotifyPlayer.disconnect();}catch(e){}spotifyPlayer=null;spotifyDeviceId=null;spotifyReady=false;spotifyTrack="";spotifyTrackName="";spotifyTrackArtists="";spotifyArtwork="";spotifyPaused=true;spotifyTrackUri="";spotifyPlaylistTracks=[];spotifyTracksLoading=false;spListOpen=false;spotifyClearTokens();renderSpotifyConnect();}
+function spotifyDisconnect(){try{spotifyPlayer&&spotifyPlayer.disconnect();}catch(e){}spotifyPlayer=null;spotifyDeviceId=null;spotifyReady=false;spotifyTrack="";spotifyTrackName="";spotifyTrackArtists="";spotifyArtwork="";spotifyPaused=true;spotifyTrackUri="";spotifyPlaylistTracks=[];spotifyTracksLoading=false;spotifyTracksLoaded=false;spotifyTracksError="";spListOpen=false;spotifyClearTokens();renderSpotifyConnect();}
 function renderSpotifyConnect(){
  const box=$("spotifyConnect");if(!box)return;
  if(!spotifySetupDone()){box.innerHTML="";return;}
@@ -324,7 +331,7 @@ function renderSpotifyConnect(){
    +'<p class="small muted" style="margin:8px 0 0">One-time login. After that, full songs play right here in the app.</p>' ;
   $("spConnectBtn").addEventListener("click",spotifyLogin);return;
  }
- if(!spotifyPlaylistTracks.length&&spotifyReady)spotifyLoadPlaylist();
+ if(spotifyReady&&!spotifyTracksLoaded)spotifyLoadPlaylist();
  let sub="";
  if(!spotifyReady)sub='<p class="small muted" style="margin:0 0 8px">Connecting player…</p>';
  let art;
@@ -348,6 +355,7 @@ function renderSpotifyConnect(){
  const rows=box.querySelectorAll(".sp-track");
  for(let i=0;i<rows.length;i++)(function(el){el.addEventListener("click",function(){spotifyPlayTrack(el.getAttribute("data-uri"));});})(rows[i]);
  $("spDisc").addEventListener("click",function(e){e.preventDefault();spotifyDisconnect();});
+ const rb=$("spRetry");if(rb)rb.addEventListener("click",function(){spotifyTracksLoaded=false;renderSpotifyConnect();});
 }
 function spotifyLink(raw){
  raw=(raw||"").trim();
@@ -368,7 +376,7 @@ $("spotifySave").addEventListener("click",()=>{
  if(/spotify\.link\//i.test(v)){$("musicMsg").textContent="That's a short link. Open it in Chrome, then copy the address from the address bar and paste that here.";return}
  const u=spotifyLink(v);
  if(!u){$("musicMsg").textContent="That doesn't look like a Spotify link. In Spotify, tap Share, then Copy link.";return}
- prefs.spotify=u;savePrefs();renderMusic();spotifyPlaylistTracks=[];spotifyLoadPlaylist();$("spotifyInput").value="";$("musicMsg").textContent="Playlist saved on this device.";
+ prefs.spotify=u;savePrefs();renderMusic();spotifyPlaylistTracks=[];spotifyTracksLoaded=false;spotifyTracksError="";spotifyLoadPlaylist();$("spotifyInput").value="";$("musicMsg").textContent="Playlist saved on this device.";
 });
 function announceStep(){const s=steps[stepIndex];tone(s.type==="Run"?850:560,.22);speak(s.type==="Run"?"Start running. Let's fucking go, my nigga!":s.type==="Walk"||s.type.includes("walk")?"Walk and recover. Nice fucking work, my nigga.":s.type);$("phase").textContent=s.type;$("stepText").textContent=s.type;$("clock").textContent=fmt(remaining);$("stepCount").textContent=`Stage ${stepIndex+1} of ${steps.length}`;}
 function calcElapsed(){let e=0;for(let i=0;i<stepIndex;i++)e+=steps[i].secs;return e+steps[stepIndex].secs-remaining}
@@ -503,7 +511,7 @@ function renderHistMap(ts){
  else el.style.display="none";
 }
 function beginWorkout(){
- steps=sessionSteps(state.selectedWeek,state.selectedRun);total=totalFor(steps);stepIndex=0;remaining=steps[0].secs;stepEnd=Date.now()+remaining*1000;elapsed=0;started=true;running=true;paused=false;
+ steps=sessionSteps(state.selectedWeek,state.selectedRun);total=totalFor(steps);stepIndex=0;remaining=steps[0].secs;stepEnd=Date.now()+remaining*1000;elapsed=0;started=true;running=true;paused=false;sessionFinished=false;
  $("timerProgress").style.width="0%";announceStep();keepAwake(true);
  $("startBtn").textContent="Restart workout";$("pauseBtn").disabled=false;$("skipBtn").disabled=false;$("pauseBtn").textContent="Pause";
  interval=setInterval(tick,1000);startTrack();
@@ -518,19 +526,22 @@ function startWorkout(){
  stopTimer();beginWorkout();
 }
 function stopTimer(){if(interval)clearInterval(interval);interval=null;running=false;paused=false;keepAwake(false);stopTrack()}
+let sessionFinished=false;
 function finishWorkout(){
+ if(sessionFinished)return;sessionFinished=true;
  stopTimer();tone(900,.4);speak("Workout complete. Great fucking job, my nigga! Take your cool down nice and slow.");
- const k=workoutKey(state.selectedWeek,state.selectedRun);
- if(!state.completed.some(x=>x.key===k)){
-  const entry={key:k,week:state.selectedWeek,run:state.selectedRun,date:dateKey(),timestamp:Date.now(),minutes:Math.round(total/60)};
-  const km=trackKm(track);
-  if(km>0.05&&track.length>1&&elapsed>30){entry.km=+km.toFixed(2);entry.paceSec=+(elapsed/km).toFixed(0);entry.track=downsample(track);}
-  state.completed.push(entry);save();
- }
+ // Final elapsed from the plan position (guarded: stepIndex may be past the end).
+ elapsed=stepIndex>=steps.length?total:calcElapsed();
+ const finElapsed=Math.max(0,Math.round(elapsed));
+ // Every finish is its own attempt; the plan slot (key) is separate from attempts.
+ const entry={key:workoutKey(state.selectedWeek,state.selectedRun),week:state.selectedWeek,run:state.selectedRun,date:dateKey(),timestamp:Date.now(),minutes:Math.round(finElapsed/60),durationSec:finElapsed};
+ const km=trackKm(track);
+ if(km>0.05&&track.length>1&&finElapsed>30){entry.km=+km.toFixed(2);entry.paceSec=+(finElapsed/km).toFixed(0);entry.track=downsample(track);}
+ state.completed.push(entry);save();
  $("phase").textContent="Workout complete";$("clock").textContent="00:00";$("stepText").textContent="Great work — you've done today's session";$("stepCount").textContent="Saved to your progress";$("timerProgress").style.width="100%";$("startBtn").textContent="Run again";$("pauseBtn").disabled=true;$("skipBtn").disabled=true;renderProgress();renderPlan();
 }
 function renderProgress(){
- $("doneCount").textContent=state.completed.length;
+ $("doneCount").textContent=new Set(state.completed.map(x=>x.key)).size;
  $("weekCount").textContent=state.completed.filter(x=>x.week===state.selectedWeek).length+"/3";
  let weeks=0;for(let w=0;w<9;w++){if([0,1,2].every(r=>isDone(w,r)))weeks++;else break}
  $("streakCount").textContent=weeks;
@@ -554,6 +565,24 @@ $("startBtn").addEventListener("click",startWorkout);
 $("pauseBtn").addEventListener("click",()=>{if(!started)return;if(!paused){if(sync()<0)return;paused=true;running=false;if(interval)clearInterval(interval);interval=null;keepAwake(false);$("pauseBtn").textContent="Resume";$("phase").textContent="Paused";$("stepText").textContent=steps[stepIndex].type;$("stepCount").textContent=`Stage ${stepIndex+1} of ${steps.length}`;updateTimer()}else resumeWorkout()});
 $("skipBtn").addEventListener("click",()=>{if(!started)return;if(running&&sync()<0)return;stepIndex++;if(stepIndex>=steps.length){finishWorkout();return}remaining=steps[stepIndex].secs;stepEnd=Date.now()+remaining*1000;elapsed=calcElapsed();announceStep();updateTimer()});
 $("exportBtn").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="first-5k-progress.json";a.click();URL.revokeObjectURL(url)});
+$("importBtn").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",e=>{
+ const f=e.target.files[0];e.target.value="";
+ if(!f)return;
+ const rd=new FileReader();
+ rd.onload=()=>{
+  try{
+   const data=JSON.parse(rd.result);
+   if(!data||!Array.isArray(data.completed))throw new Error("bad");
+   if(!confirm("Restore this backup? Your current progress ("+state.completed.length+" runs) will be replaced by "+data.completed.length+" runs from the backup file."))return;
+   stopTimer();
+   state={completed:data.completed,selectedWeek:Math.min(8,Math.max(0,+data.selectedWeek||0)),selectedRun:Math.min(2,Math.max(0,+data.selectedRun||0))};
+   save();fillSelectors();loadWorkout();
+   alert("Backup restored.");
+  }catch(err){alert("That file isn't a valid First 5K backup. Nothing was changed.");}
+ };
+ rd.readAsText(f);
+});
 $("resetBtn").addEventListener("click",()=>{if(confirm("Reset all saved progress? This cannot be undone unless you exported a backup.")){state={completed:[],selectedWeek:0,selectedRun:0};save();stopTimer();fillSelectors();loadWorkout()}});
 fillSelectors();loadWorkout();
 renderVoice();renderMusic();renderSpotifyConnect();spotifyHandleCallback();
