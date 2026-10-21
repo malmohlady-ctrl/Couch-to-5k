@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#100c09">
+<meta name="theme-color" content="#10182b">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -11,34 +11,34 @@
 <link rel="stylesheet" href="player.css">
 <title>Couch to 5K</title>
 <style>
-:root{--bg:#171310;--card:#221a14;--ink:#f7ede3;--muted:#a89a8a;--primary:#ff7a1a;--primary2:#3a2313;--line:#332920;--accent:#ffb37a;--red:#e05252}
+:root{--bg:#141b2e;--card:#1c2742;--ink:#f5eeda;--muted:#a8b4d4;--primary:#d4a72c;--primary2:#2e2a1a;--line:#2c3a5e;--accent:#f6d47a;--red:#e05a5a}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-header{background:#100c09;color:white;padding:24px 18px 22px;border-radius:0 0 24px 24px}
-.wrap{max-width:760px;margin:auto}header .eyebrow{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#ff7a1a;font-weight:700}
+header{background:#10182b;color:white;padding:24px 18px 22px;border-radius:0 0 24px 24px}
+.wrap{max-width:760px;margin:auto}header .eyebrow{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:#d4a72c;font-weight:700}
 h1{font-size:28px;line-height:1.1;margin:8px 0;font-family:"Arial Narrow","Helvetica Neue Condensed",Impact,sans-serif;font-style:italic;letter-spacing:.03em}
 h2{font-size:20px;margin:0 0 12px;font-family:"Arial Narrow","Helvetica Neue Condensed",Impact,sans-serif;font-style:italic;letter-spacing:.02em;font-weight:800}
 .phase,.clock,.steptext,header .eyebrow{font-family:"Arial Narrow","Helvetica Neue Condensed",Impact,sans-serif;font-style:italic}
 .clock{letter-spacing:-.02em}
-nav button,button.primary,button.secondary,button.danger{font-family:"Arial Narrow","Helvetica Neue Condensed",Impact,sans-serif;font-style:italic;font-weight:800;letter-spacing:.03em}header p{margin:8px 0 0;color:#cbbfae}
+nav button,button.primary,button.secondary,button.danger{font-family:"Arial Narrow","Helvetica Neue Condensed",Impact,sans-serif;font-style:italic;font-weight:800;letter-spacing:.03em}header p{margin:8px 0 0;color:#d9d3bf}
 nav{display:flex;gap:8px;padding:14px 14px 0;max-width:760px;margin:auto}
-nav button{flex:1;border:1px solid var(--line);background:#221a14;color:var(--muted);border-radius:12px;padding:11px 5px;font-weight:700}
-nav button.active{background:var(--primary);border-color:var(--primary);color:#171310}
+nav button{flex:1;border:1px solid var(--line);background:#1c2742;color:var(--muted);border-radius:12px;padding:11px 5px;font-weight:700}
+nav button.active{background:var(--primary);border-color:var(--primary);color:#141b2e}
 main{padding:14px;max-width:760px;margin:auto}.panel{display:none}.panel.active{display:block}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:17px;margin-bottom:13px;box-shadow:0 2px 8px #00000066}
 h3{font-size:16px;margin:0 0 7px}.muted{color:var(--muted)}.small{font-size:13px}
 .row{display:flex;gap:10px;align-items:center}.row>*{min-width:0}.row>label{flex:0 0 108px}.row>select{flex:1 1 auto;min-width:0}.between{justify-content:space-between}
-select,button,input{font:inherit}select{width:100%;padding:11px;border:1px solid var(--line);border-radius:11px;background:#221a14;color:var(--ink)}
+select,button,input{font:inherit}select{width:100%;padding:11px;border:1px solid var(--line);border-radius:11px;background:#1c2742;color:var(--ink)}
 button.primary,button.secondary,button.danger{border:0;border-radius:12px;padding:13px 15px;font-weight:750;cursor:pointer}
-button.primary{background:var(--primary);color:#171310}button.secondary{background:var(--primary2);color:var(--primary)}button.danger{background:#3a1d16;color:var(--red)}
+button.primary{background:var(--primary);color:#141b2e}button.secondary{background:var(--primary2);color:var(--primary)}button.danger{background:#232f52;color:var(--red)}
 button:disabled{opacity:.45;cursor:not-allowed}.full{width:100%}
-.pills{display:flex;gap:8px;flex-wrap:wrap}.pill{border-radius:999px;padding:6px 10px;background:#3a2313;color:#ffb37a;font-size:12px;font-weight:700}
-.progress{height:9px;border-radius:20px;background:#332920;overflow:hidden}.progress span{display:block;height:100%;width:0;background:var(--primary);transition:width .2s}
-.timer{text-align:center;padding:18px 0 12px}.phase{font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:13px;color:var(--primary)}.clock{font-size:clamp(56px,15vw,82px);letter-spacing:-.06em;line-height:1.1;font-variant-numeric:tabular-nums;font-weight:800;margin:8px 0}.steptext{font-size:17px;font-weight:700}.quote{border-left:4px solid var(--accent);padding:10px 13px;background:#2e1f14;border-radius:0 10px 10px 0;color:#ffb37a}
-.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#2a2018;padding:12px;border-radius:12px}.stat strong{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}
-.week{padding:13px 0;border-bottom:1px solid var(--line)}.week:last-child{border-bottom:0}.sessions{display:flex;gap:7px;margin-top:9px}.session{flex:1;text-align:center;border:1px solid var(--line);border-radius:10px;padding:9px 2px;font-size:12px;background:#221a14}.session.done{background:var(--primary2);border-color:#5a3a1f;color:var(--primary);font-weight:800}.session.current{border:2px solid var(--primary);padding:8px 1px}
+.pills{display:flex;gap:8px;flex-wrap:wrap}.pill{border-radius:999px;padding:6px 10px;background:#2e2a1a;color:#f6d47a;font-size:12px;font-weight:700}
+.progress{height:9px;border-radius:20px;background:#2c3a5e;overflow:hidden}.progress span{display:block;height:100%;width:0;background:var(--primary);transition:width .2s}
+.timer{text-align:center;padding:18px 0 12px}.phase{font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:13px;color:var(--primary)}.clock{font-size:clamp(56px,15vw,82px);letter-spacing:-.06em;line-height:1.1;font-variant-numeric:tabular-nums;font-weight:800;margin:8px 0}.steptext{font-size:17px;font-weight:700}.quote{border-left:4px solid var(--accent);padding:10px 13px;background:#1c2742;border-radius:0 10px 10px 0;color:#f6d47a}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#1c2742;padding:12px;border-radius:12px}.stat strong{display:block;font-size:22px}.stat span{font-size:12px;color:var(--muted)}
+.week{padding:13px 0;border-bottom:1px solid var(--line)}.week:last-child{border-bottom:0}.sessions{display:flex;gap:7px;margin-top:9px}.session{flex:1;text-align:center;border:1px solid var(--line);border-radius:10px;padding:9px 2px;font-size:12px;background:#1c2742}.session.done{background:var(--primary2);border-color:#2c3a5e;color:var(--primary);font-weight:800}.session.current{border:2px solid var(--primary);padding:8px 1px}
 footer{padding:4px 18px 28px;text-align:center;color:var(--muted);font-size:12px;max-width:760px;margin:auto}
 hr{border:0;border-top:1px solid var(--line);margin:15px 0}
-input[type=url]{width:100%;padding:11px;border:1px solid var(--line);border-radius:11px;background:#221a14;color:var(--ink)}
+input[type=url]{width:100%;padding:11px;border:1px solid var(--line);border-radius:11px;background:#1c2742;color:var(--ink)}
 input[type=range]{width:100%;accent-color:var(--primary)}
 details summary{cursor:pointer;font-weight:700}iframe{display:block}
 @media(min-width:600px){main{padding:18px}.card{padding:20px}.timer{padding:20px 0}}
@@ -68,7 +68,7 @@ details summary{cursor:pointer;font-weight:700}iframe{display:block}
 </div>
 <div class="card" id="trackCard">
 <h3>Run map</h3>
-<div id="liveMap" style="height:230px;border-radius:12px;overflow:hidden;background:#221a14"></div>
+<div id="liveMap" style="height:230px;border-radius:12px;overflow:hidden;background:#1c2742"></div>
 <div class="statgrid" style="margin-top:10px"><div class="stat"><strong id="liveKm">0.00</strong><span>km</span></div><div class="stat"><strong id="livePace">–</strong><span>pace /km</span></div><div class="stat"><strong id="liveTime">0:00</strong><span>time</span></div></div>
 <p class="small muted" id="trackMsg" style="margin-bottom:0">Your route is drawn as you run. It never leaves your phone.</p>
 </div>
@@ -273,8 +273,8 @@ function drawLiveMap(){
     el.innerHTML="";
     liveMap=L.map("liveMap",{zoomControl:false}).setView(latlngs[0],15);
     L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors © CARTO"}).addTo(liveMap);
-    liveLine=L.polyline(latlngs,{color:"#ff7a1a",weight:4}).addTo(liveMap);
-    L.circleMarker(latlngs[0],{radius:6,color:"#ff7a1a",fillColor:"#ff7a1a",fillOpacity:1}).addTo(liveMap);
+    liveLine=L.polyline(latlngs,{color:"#d4a72c",weight:4}).addTo(liveMap);
+    L.circleMarker(latlngs[0],{radius:6,color:"#d4a72c",fillColor:"#d4a72c",fillOpacity:1}).addTo(liveMap);
     setTimeout(()=>{try{liveMap.invalidateSize()}catch(e){}},150);
    }else liveLine.setLatLngs(latlngs);
    liveMap.fitBounds(liveLine.getBounds(),{padding:[24,24]});
@@ -289,13 +289,13 @@ function drawTraceCanvas(el,pts){
  let a=Math.min(...lats),b=Math.max(...lats),c=Math.min(...lons),d=Math.max(...lons);
  if(b-a<1e-6){b+=5e-5;a-=5e-5}if(d-c<1e-6){d+=5e-5;c-=5e-5}
  const X=lo=>20+(lo-c)/(d-c)*(w-40),Y=la=>20+(1-(la-a)/(b-a))*(h-40);
- el.innerHTML=`<canvas width="${w}" height="${h}" style="width:100%;display:block;border-radius:12px;background:#221a14"></canvas><p class="small muted" style="margin:6px 0 0">Offline — the street map needs a data connection.</p>`;
+ el.innerHTML=`<canvas width="${w}" height="${h}" style="width:100%;display:block;border-radius:12px;background:#1c2742"></canvas><p class="small muted" style="margin:6px 0 0">Offline — the street map needs a data connection.</p>`;
  const g=el.querySelector("canvas").getContext("2d");
- g.strokeStyle="#ff7a1a";g.lineWidth=3;g.lineJoin="round";g.beginPath();
+ g.strokeStyle="#d4a72c";g.lineWidth=3;g.lineJoin="round";g.beginPath();
  pts.forEach((p,i)=>{const x=X(p.lon),y=Y(p.lat);i?g.lineTo(x,y):g.moveTo(x,y)});
  g.stroke();
- g.fillStyle="#ff7a1a";g.beginPath();g.arc(X(pts[0].lon),Y(pts[0].lat),5,0,7);g.fill();
- g.fillStyle="#e05252";const e=pts[pts.length-1];g.beginPath();g.arc(X(e.lon),Y(e.lat),5,0,7);g.fill();
+ g.fillStyle="#d4a72c";g.beginPath();g.arc(X(pts[0].lon),Y(pts[0].lat),5,0,7);g.fill();
+ g.fillStyle="#e05a5a";const e=pts[pts.length-1];g.beginPath();g.arc(X(e.lon),Y(e.lat),5,0,7);g.fill();
 }
 function drawTrackInto(el,pts){
  const latlngs=pts.map(p=>[p.lat,p.lon]);
@@ -304,10 +304,10 @@ function drawTrackInto(el,pts){
    el.innerHTML="";
    const m=L.map(el,{zoomControl:false}).setView(latlngs[0],15);
    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors © CARTO"}).addTo(m);
-   const line=L.polyline(latlngs,{color:"#ff7a1a",weight:4}).addTo(m);
-   L.circleMarker(latlngs[0],{radius:5,color:"#ff7a1a",fillColor:"#ff7a1a",fillOpacity:1}).addTo(m);
+   const line=L.polyline(latlngs,{color:"#d4a72c",weight:4}).addTo(m);
+   L.circleMarker(latlngs[0],{radius:5,color:"#d4a72c",fillColor:"#d4a72c",fillOpacity:1}).addTo(m);
    const e=latlngs[latlngs.length-1];
-   L.circleMarker(e,{radius:5,color:"#e05252",fillColor:"#e05252",fillOpacity:1}).addTo(m);
+   L.circleMarker(e,{radius:5,color:"#e05a5a",fillColor:"#e05a5a",fillOpacity:1}).addTo(m);
    m.fitBounds(line.getBounds(),{padding:[16,16]});
    setTimeout(()=>{try{m.invalidateSize()}catch(_){}},150);
    return;
