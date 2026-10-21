@@ -130,7 +130,7 @@ function save(){try{localStorage.setItem(key,JSON.stringify(state))}catch(e){}}
 function fmt(s){s=Math.max(0,Math.ceil(s));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
 function dateKey(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function workoutKey(w,r){return (w+1)+"-"+(r+1)}
-function isDone(w,r){return state.completed.some(x=>x.key===workoutKey(w,r))}
+function isDone(w,r){return state.completed.some(x=>x.key===workoutKey(w,r)&&x.status!=="partial")}
 function selectedDone(){return isDone(state.selectedWeek,state.selectedRun)}
 function fillSelectors(){
  $("weekSelect").innerHTML=plans.map((p,i)=>`<option value="${i}">Wk ${i+1}</option>`).join("");
@@ -322,7 +322,7 @@ function renderHistMap(ts){
  else el.style.display="none";
 }
 function beginWorkout(){
- steps=sessionSteps(state.selectedWeek,state.selectedRun);total=totalFor(steps);stepIndex=0;remaining=steps[0].secs;stepEnd=Date.now()+remaining*1000;elapsed=0;started=true;running=true;paused=false;sessionFinished=false;
+ steps=sessionSteps(state.selectedWeek,state.selectedRun);total=totalFor(steps);stepIndex=0;remaining=steps[0].secs;stepEnd=Date.now()+remaining*1000;elapsed=0;started=true;running=true;paused=false;sessionFinished=false;skippedAny=false;
  $("timerProgress").style.width="0%";announceStep();keepAwake(true);
  $("startBtn").textContent="Restart workout";$("pauseBtn").disabled=false;$("skipBtn").disabled=false;$("pauseBtn").textContent="Pause";
  interval=setInterval(tick,1000);startTrack();
@@ -338,6 +338,7 @@ function startWorkout(){
 }
 function stopTimer(){if(interval)clearInterval(interval);interval=null;running=false;paused=false;keepAwake(false);stopTrack()}
 let sessionFinished=false;
+let skippedAny=false;
 function finishWorkout(){
  if(sessionFinished)return;sessionFinished=true;
  stopTimer();tone(900,.4);speak("Workout complete. Great fucking job, my nigga! Take your cool down nice and slow.");
@@ -345,22 +346,23 @@ function finishWorkout(){
  elapsed=stepIndex>=steps.length?total:calcElapsed();
  const finElapsed=Math.max(0,Math.round(elapsed));
  // Every finish is its own attempt; the plan slot (key) is separate from attempts.
- const entry={key:workoutKey(state.selectedWeek,state.selectedRun),week:state.selectedWeek,run:state.selectedRun,date:dateKey(),timestamp:Date.now(),minutes:Math.round(finElapsed/60),durationSec:finElapsed};
+ const status=(!skippedAny&&finElapsed>=0.9*total)?"completed":"partial";
+ const entry={key:workoutKey(state.selectedWeek,state.selectedRun),week:state.selectedWeek,run:state.selectedRun,date:dateKey(),timestamp:Date.now(),minutes:Math.round(finElapsed/60),durationSec:finElapsed,status};
  const km=trackKm(track);
  if(km>0.05&&track.length>1&&finElapsed>30){entry.km=+km.toFixed(2);entry.paceSec=+(finElapsed/km).toFixed(0);entry.track=downsample(track);}
  state.completed.push(entry);save();
- $("phase").textContent="Workout complete";$("clock").textContent="00:00";$("stepText").textContent="Great work — you've done today's session";$("stepCount").textContent="Saved to your progress";$("timerProgress").style.width="100%";$("startBtn").textContent="Run again";$("pauseBtn").disabled=true;$("skipBtn").disabled=true;renderProgress();renderPlan();
+ $("phase").textContent=status==="partial"?"Session ended early":"Workout complete";$("clock").textContent="00:00";$("stepText").textContent="Great work — you've done today's session";$("stepCount").textContent="Saved to your progress";$("timerProgress").style.width="100%";$("startBtn").textContent="Run again";$("pauseBtn").disabled=true;$("skipBtn").disabled=true;renderProgress();renderPlan();
 }
 function renderProgress(){
- $("doneCount").textContent=new Set(state.completed.map(x=>x.key)).size;
- $("weekCount").textContent=state.completed.filter(x=>x.week===state.selectedWeek).length+"/3";
+ $("doneCount").textContent=new Set(state.completed.filter(x=>x.status!=="partial").map(x=>x.key)).size;
+ $("weekCount").textContent=state.completed.filter(x=>x.week===state.selectedWeek&&x.status!=="partial").length+"/3";
  let weeks=0;for(let w=0;w<9;w++){if([0,1,2].every(r=>isDone(w,r)))weeks++;else break}
  $("streakCount").textContent=weeks;
  $("historyList").innerHTML=state.completed.length?state.completed.slice().sort((a,b)=>b.timestamp-a.timestamp).map(x=>{
   const sub=`${x.date} · ${x.minutes} min`+(x.km?` · ${x.km.toFixed(2)} km · ${fmtPace(x.paceSec)} /km`:"");
   const mapDiv=x.track&&x.track.length?`<div id="histmap-${x.timestamp}" style="display:none;height:210px;border-radius:12px;overflow:hidden;margin:2px 0 8px"></div>`:"";
   const tap=x.track&&x.track.length?`<br><span class="small" style="color:var(--primary);font-weight:700">Tap to view map</span>`:"";
-  return `<div class="histrow" data-ts="${x.timestamp}" style="${x.track?'cursor:pointer;':''}padding:9px 0;border-bottom:1px solid var(--line)"><div class="row between"><span><strong>Week ${x.week+1} · Run ${x.run+1}</strong><br><span class="muted">${sub}</span>${tap}</span><span style="color:var(--primary);font-weight:800">✓ Done</span></div></div>${mapDiv}`;
+  return `<div class="histrow" data-ts="${x.timestamp}" style="${x.track?'cursor:pointer;':''}padding:9px 0;border-bottom:1px solid var(--line)"><div class="row between"><span><strong>Week ${x.week+1} · Run ${x.run+1}</strong><br><span class="muted">${sub}</span>${tap}</span><span style="color:var(--primary);font-weight:800">${x.status==="partial"?"◐ Partial":"✓ Done"}</span></div></div>${mapDiv}`;
  }).join(""):'Complete your first workout to see it here.';
  document.querySelectorAll(".histrow").forEach(r=>r.addEventListener("click",()=>renderHistMap(+r.dataset.ts)));
 }
@@ -374,7 +376,7 @@ $("weekSelect").addEventListener("change",e=>{state.selectedWeek=+e.target.value
 $("runSelect").addEventListener("change",e=>{state.selectedRun=+e.target.value;save();loadWorkout()});
 $("startBtn").addEventListener("click",startWorkout);
 $("pauseBtn").addEventListener("click",()=>{if(!started)return;if(!paused){if(sync()<0)return;paused=true;running=false;if(interval)clearInterval(interval);interval=null;keepAwake(false);$("pauseBtn").textContent="Resume";$("phase").textContent="Paused";$("stepText").textContent=steps[stepIndex].type;$("stepCount").textContent=`Stage ${stepIndex+1} of ${steps.length}`;updateTimer()}else resumeWorkout()});
-$("skipBtn").addEventListener("click",()=>{if(!started)return;if(running&&sync()<0)return;stepIndex++;if(stepIndex>=steps.length){finishWorkout();return}remaining=steps[stepIndex].secs;stepEnd=Date.now()+remaining*1000;elapsed=calcElapsed();announceStep();updateTimer()});
+$("skipBtn").addEventListener("click",()=>{if(!started)return;skippedAny=true;if(running&&sync()<0)return;stepIndex++;if(stepIndex>=steps.length){finishWorkout();return}remaining=steps[stepIndex].secs;stepEnd=Date.now()+remaining*1000;elapsed=calcElapsed();announceStep();updateTimer()});
 $("exportBtn").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="first-5k-progress.json";a.click();URL.revokeObjectURL(url)});
 $("importBtn").addEventListener("click",()=>$("importFile").click());
 $("importFile").addEventListener("change",e=>{
