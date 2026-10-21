@@ -1,5 +1,5 @@
 /* First 5K service worker — cache-first offline support */
-const CACHE = "first5k-v27";
+const CACHE = "first5k-v28";
 
 const ASSETS = [
   "./",
